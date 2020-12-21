@@ -1,0 +1,6 @@
+channels:
+  - r
+  - anaconda
+  - defaults
+dependencies:
+- r-base=3.6.1
