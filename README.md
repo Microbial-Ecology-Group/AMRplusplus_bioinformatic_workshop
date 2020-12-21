@@ -1,6 +1,6 @@
-# Introduction to statistical analysis of metagenomic sequencing data
+# MEG team - AMR++ workshop
 ## Course syllabus
-Start Date: May 11, 2020
+Start Date: January 5, 2020
 
 Email: meglab.metagenomics@gmail.com
   * Paul Morley - pmorley@tamu.edu
@@ -27,7 +27,6 @@ https://mybinder.org/v2/gh/EnriqueDoster/MEG_intro_stats_course/master?urlpath=r
 * [Learning objectives](#learning-objectives)
 * [Resources](#resources)
 * [Timeline](#timeline)
-* [Deliverables](#deliverables)
 
 ### Summary
 These lessons are designed to introduce researchers to the R programming language for statistical analysis of metagenomic sequencing data. While we are primarily developing these training resources for the Microbial Ecology Group (MEG), we would love to get your input on improvements to any component so that we can one day provide this as a useful public resource. As the lessons are meant to be an informal collection of resources and tutorials, we have have liberally used parts and pieces of other online lessons and tailored it for our purposes. We attempt to give credit when possible by linking the original source and we are happy to hear recommendations for other resources to include.
@@ -38,13 +37,10 @@ This will be the first time that we attempt going through this lesson with a gro
 * We'll organize a group to all take the same lesson together and **we'll have a virtual meeting once per week for 30 minutes** to go over each of the steps in that lesson. The majority of the work will be self-directed and on your own time, but we encourage you to work in groups and participate in asking questions in the slack group. If you don't have any questions and find this all extremely easy, please help others with their questions and help us improve our lessons.
   * There is 1 "deliverable" per step. Some steps require something be sent to "meglab.metagenomics@gmail.com" or will have a link to a corresponding set of questions.
 
-### Techie time
 We wholeheartedly encourage students to independently troubleshoot the majority of problems they might encounter by:
 * googling it (or using another search engine)
-* getting help from other students by using our slackgroup channel #2020-stats-tutorial-group
+* getting help from other students by using our slackgroup channel #2021-AMR++workshop
 * searching bioinformatic forums such as (stackoverflow.com, biostars.org, seqanswers.com, etc.)
-
-In addition, we will have "techie time" every Monday at 12pm-2pm MST on Slack to help address any ongoing issues.
 
 
 ### Learning objectives:
@@ -161,19 +157,6 @@ We'll start on May 11, 2020 at 12pm MT and have weekly virtual meetings on zoom.
   * Start: August 6, 2020
   * Requested completion: August 12, 2020
 
-## Deliverables:
-Lesson 1 deliverables
-* For Step 1 and 2, students must send a screenshot of their "sessionInfo()" to ensure that R and R studio are installed in addition to the necessary R packages, respectively.
-* Step 3 - After familiarizing themselves with some basic R functionality, students will submit a short quiz.
-* Step 4 - Given a count matrix file, taxonomy file, and sample metadata file, students must read-in all data to R and submit a short quiz.
-
-Lesson 2 deliverables
-* Step 1 - Students will calculate summary statistics for the microbiome/resistome and will submit a quiz.
-* Step 2 - Students will learn to create different figures using ggplot2. They will follow instructions to create and submit two custom figures.
-* Step 3 - Using the summary statistics from step 2, students will test for statistical differences between sample groups.
-
-Lesson 3 deliverables
-* TBD
 
 ## Funding Information:
 The development of this tutorial was supported in part by USDA NIFA Grant No. 2018-51300-28563, University of Minnesota College of Veterinary Medicine, The VERO Program at Texas A&M University and West Texas A&M University, and the State of Minnesota Agricultural Research, Education, Extension and Technology Transfer program.
