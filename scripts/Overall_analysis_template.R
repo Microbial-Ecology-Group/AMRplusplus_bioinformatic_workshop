@@ -6,10 +6,10 @@
 # analyzing the "Group" column. 
 
 # Based on whatever you named your phyloseq object, the first step is to rename the 
-# object to "microbiome.ps"
+# object to "kraken_microbiome.ps"
 # source("./scripts/load_data.R") # This is how I loaded the test dataset
 
-microbiome.ps
+kraken_microbiome.ps
 
 #################
 # Summary stats #
@@ -17,20 +17,20 @@ microbiome.ps
 
 # This is using columns in your sample metadata file, so be sure it corresponds with your data
 # Summarize for entire dataset
-sample_data(microbiome.ps) %>%
+sample_data(kraken_microbiome.ps) %>%
   summarize(total_16S_counts = sum(X16S_Raw_paired_reads), mean_16S_counts = mean(X16S_Raw_paired_reads),
             min_16S_counts = min(X16S_Raw_paired_reads),max_16S_counts = max(X16S_Raw_paired_reads),
             median_16S_counts = median(X16S_Raw_paired_reads))
 
 # Summarize by Group
-sample_data(microbiome.ps) %>%
+sample_data(kraken_microbiome.ps) %>%
   group_by(Group) %>% 
   summarize(total_16S_counts = sum(X16S_Raw_paired_reads), mean_16S_counts = mean(X16S_Raw_paired_reads),
             min_16S_counts = min(X16S_Raw_paired_reads),max_16S_counts = max(X16S_Raw_paired_reads),
             median_16S_counts = median(X16S_Raw_paired_reads))
 
 # Plot boxplot by Group
-ggplot(sample_data(microbiome.ps), aes(x = Group , y = X16S_Raw_paired_reads, color = Group)) + 
+ggplot(sample_data(kraken_microbiome.ps), aes(x = Group , y = X16S_Raw_paired_reads, color = Group)) + 
   geom_boxplot() +
   geom_jitter(width = 0.1) +
   labs(title = "Metagenomic sequencing results", x = "Treatment group", y = "raw paired reads") + 
@@ -40,18 +40,18 @@ ggplot(sample_data(microbiome.ps), aes(x = Group , y = X16S_Raw_paired_reads, co
         panel.background = element_blank())
 
 # Test for differences in sequencing depth by Group
-wilcox.test(sample_data(microbiome.ps)$X16S_Raw_paired_reads ~ sample_data(microbiome.ps)$Group)
+wilcox.test(sample_data(kraken_microbiome.ps)$X16S_Raw_paired_reads ~ sample_data(kraken_microbiome.ps)$Group)
 
 
 ##########################
 #  Microbiome diversity  #
 ##########################
 
-microbiome_16S_diversity_values <- estimate_richness(microbiome.ps)
+microbiome_16S_diversity_values <- estimate_richness(kraken_microbiome.ps)
 microbiome_16S_diversity_values$Sample <- row.names(microbiome_16S_diversity_values)
 
 # Remember, that with phyloseq objects have to convert to matrix first, then to dataframe
-sample_metadata <- as.data.frame(as(sample_data(microbiome.ps), "matrix"))
+sample_metadata <- as.data.frame(as(sample_data(kraken_microbiome.ps), "matrix"))
 
 # Make a column "Sample" to join the metadata file with the diversity indices
 sample_metadata$Sample <- row.names(sample_data(sample_metadata))
@@ -72,7 +72,7 @@ wilcox.test(microbiome_16S_diversity_values$Shannon ~ microbiome_16S_diversity_v
 
 
 # Same analysis by phylum (raw data)
-phylum_microbiome.ps <- tax_glom(microbiome.ps, "phylum")
+phylum_microbiome.ps <- tax_glom(kraken_microbiome.ps, "phylum")
 phylum_16S_diversity_values <- estimate_richness(phylum_microbiome.ps)
 phylum_16S_diversity_values$Sample <- row.names(phylum_16S_diversity_values)
 
@@ -95,11 +95,11 @@ wilcox.test(phylum_16S_diversity_values$Shannon ~ phylum_16S_diversity_values$Gr
 ##########################
 
 
-filtered_microbiome.ps = filter_taxa(microbiome.ps, function(x) sum(x) > 5, TRUE)
+filtered_microbiome.ps = filter_taxa(kraken_microbiome.ps, function(x) sum(x) > 5, TRUE)
 filtered_microbiome.metaseq <- phyloseq_to_metagenomeSeq(filtered_microbiome.ps)
 cumNorm(filtered_microbiome.metaseq)
 CSS_microbiome_counts <- MRcounts(filtered_microbiome.metaseq, norm = TRUE)
-CSS_normalized_microbiome.ps <- merge_phyloseq(otu_table(CSS_microbiome_counts, taxa_are_rows = TRUE),sample_data(microbiome.ps),tax_table(microbiome.ps), phy_tree(microbiome.ps))
+CSS_normalized_microbiome.ps <- merge_phyloseq(otu_table(CSS_microbiome_counts, taxa_are_rows = TRUE),sample_data(kraken_microbiome.ps),tax_table(kraken_microbiome.ps), phy_tree(kraken_microbiome.ps))
 CSS_normalized_phylum_microbiome.ps <- tax_glom(CSS_normalized_microbiome.ps, "phylum")
 
 plot_bar(CSS_normalized_phylum_microbiome.ps, fill = "phylum") + 

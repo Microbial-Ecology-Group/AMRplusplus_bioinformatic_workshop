@@ -14,9 +14,9 @@ library("vegan")
 #
 
 # We import the .biom as in Lesson 1 step 4
-qiime_microbiome <- import_biom("data/Exported_16S_qiime2_results/Lesson2_16S_asv_table.biom")
+qiime_microbiome <- import_biom("data/Exported_16S_qiime2_results/16S_asv_table.biom")
 # Load the taxonomy file from qiime2
-taxa <- read.table("data/Exported_16S_qiime2_results/Lesson2_taxonomy.tsv", header=T, row.names=1, sep='\t', quote = "")
+taxa <- read.table("data/Exported_16S_qiime2_results/taxonomy.tsv", header=T, row.names=1, sep='\t', quote = "")
 row.names(taxa) <- paste(row.names(taxa),taxa[,1], sep= '; ')
 taxa.dt <- data.table(id=rownames(taxa)) # we'll make a column with the name "id"
 taxa.dt[, c('feature',
@@ -33,7 +33,7 @@ taxa.df <- within(taxa.df, rm(id))
 row.names(taxa.df) <- taxa.df$feature
 taxa.df <- within(taxa.df, rm(feature))
 
-qiime_microbiome_phylo_tree <- read_tree("./data/Exported_16S_qiime2_results/Lesson2_tree.nwk")
+qiime_microbiome_phylo_tree <- read_tree("./data/Exported_16S_qiime2_results/tree.nwk")
 
 qiime_microbiome.ps <- merge_phyloseq(qiime_microbiome, phy_tree(qiime_microbiome_phylo_tree), tax_table(as.matrix(taxa.df)), sample_data(sample_metadata))
 
