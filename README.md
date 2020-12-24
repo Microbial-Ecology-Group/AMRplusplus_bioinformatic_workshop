@@ -1,4 +1,4 @@
-# MEG team - AMR++ workshop
+# Microbial Ecology Group (MEG) - AMR++ bionformatics workshop
 ## Course syllabus
 Start Date: January 5, 2020
 
