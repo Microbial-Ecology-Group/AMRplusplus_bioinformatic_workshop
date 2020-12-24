@@ -26,7 +26,8 @@ https://mybinder.org/v2/gh/EnriqueDoster/MEG_intro_stats_course/master?urlpath=r
 * [Course summary](#summary)
 * [Learning objectives](#learning-objectives)
 * [Resources](#resources)
-* [Timeline](#timeline)
+* [Bioinformatics overview](#bioinformatics-overview)
+* [Statistics overview](#statistics-overview)
 
 ### Summary
 These lessons are designed to introduce researchers to the R programming language for statistical analysis of metagenomic sequencing data. While we are primarily developing these training resources for the Microbial Ecology Group (MEG), we would love to get your input on improvements to any component so that we can one day provide this as a useful public resource. As the lessons are meant to be an informal collection of resources and tutorials, we have have liberally used parts and pieces of other online lessons and tailored it for our purposes. We attempt to give credit when possible by linking the original source and we are happy to hear recommendations for other resources to include.
@@ -90,7 +91,7 @@ Command-line
   * cool website that explains bash commands piece by piece
 
 
-Statistics
+Statistics resources
 * [GUide to STatistical Analysis in Microbial Ecology (GUSTA ME)](https://mb3is.megx.net/gustame)
 * [LHS 610: Exploratory Data Analysis for Health](https://kdpsingh.lab.medicine.umich.edu/lhs-610)
   * We haven't personally tried this course, but they provide great videos and code examples for learning how to explore data using R.
@@ -109,53 +110,44 @@ Statistics
   * [Identifying and mitigating batch effects in whole genome sequencing data](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-017-1756-z)
   * [Why Batch Effects Matter in Omics Data, and How to Avoid Them](https://www.cell.com/trends/biotechnology/pdf/S0167-7799(17)30036-7.pdf)
 
-## Timeline
-We'll start on May 11, 2020 at 12pm MT and have weekly virtual meetings on zoom. Please check Slack for updates!
+## Bioinformatic overview
 
-[Lesson 1 "Getting set-up with R"](https://github.com/EnriqueDoster/MEG_intro_stats_course/blob/master/lessons/Statistics_lesson_1.md)
-* Step 1 - Download and install R/RStudio
-  * Start: May 11, 2020
-  * Requested completion: May 17, 2020
-    * If you finish with time to spare, move on to Step 2. In the case that everyone finishes Step 2 before our next meeting on May 18, we can move on to Step 3 ahead of schedule.
-* Step 2 - Install R packages
-  * Start: May 18, 2020
-  * Requested completion: May 31, 2020
-* Step 3 - Introduction to R
-  * Start: May 18, 2020
-  * Requested completion: May 31, 2020
-* Step 4 - Reading-in data to R
-  * Start: June 1, 2020
-  * Requested completion: June 7, 2020
+Metagenomic sequencing approach determines the type of analysis you can perform:
+  * Shotgun metagenomic sequencing
+    * can analyze both the microbiome and resistome, in addition to other sequences such as plasmid-associated or virulence factors
+  * Target-enriched resistome sequencing (MEGARes baits)
+    * can only analyze the resistome
+  * 16S rRNA amplicon sequencing
+    * can only analyze the microbiome
+    
+In this repository, we'll show you examples of running variants of the AMR++ pipeline to achieve your bioinformatic analysis goals. We'll be using code found in [this repository of bioinformatic pipelines](https://github.com/EnriqueDoster/bioinformatic-nextflow-pipelines)
+  * AMR++ pipeline
+    * The [main_AmrPlusPlus_v2_withKraken.nf](https://github.com/EnriqueDoster/bioinformatic-nextflow-pipelines/blob/master/main_AmrPlusPlus_v2_withKraken.nf) script nalyzes shotgun metagenomic sequencing reads to characterize the microbiome using the taxanomic classier, [kraken2](https://github.com/DerrickWood/kraken2), and alignment of reads to our [MEGARes database](https://megares.meglab.org/) to characterize the resistome.
+    * The [main_AmrPlusPlus_v2.nf](https://github.com/EnriqueDoster/bioinformatic-nextflow-pipelines/blob/master/main_AmrPlusPlus_v2.nf) script is simply a subset of the entire pipeline and only performs the resistome analysis.
+  * [Qiime2 pipeline](https://qiime2.org/) 
+    * We use the Qiime2 pipeline to analyze 16S rRNA reads and export the results to a file format that we can use to analyze with R.
 
-[Lesson 2 - Data exploration and basic statistics](https://github.com/EnriqueDoster/MEG_intro_stats_course/blob/master/lessons/Statistics_lesson_2.md)
-* Scheduled to begin June 8, 2020. Dates will be updated as we finalize scheduling.
-* Step 1 - Calculating summary statistics
-  * Start: June 9, 2020
-  * Requested completion: June 14, 2020
-* Step 2 - Introduction to plotting
-  * Start: June 15, 2020
-  * Requested completion: June 21, 2020
-* Step 3 - Basic statistical testing (wilcoxon, linear models)
-  * Start: June 22, 2020
-  * Requested completion: June 28, 2020
 
-[Lesson 3 - Advanced statistical analyses and plotting](https://github.com/EnriqueDoster/MEG_intro_stats_course/blob/master/lessons/Statistics_lesson_3.md)
-* Scheduled to begin July 9, 2020. Dates will be updated as we finalize scheduling.
-* Step 1 - Count normalization
-  * Start: July 9, 2020
-  * Requested completion: July 15, 2020
-* Step 2 - Ordination with non-metric multidimensional and statistical comparisons
-  * Start: July 16, 2020
-  * Requested completion: July 22, 2020
-* Step 3 - Differential abundance testing with a Zero-inflated Gaussian model
-  * Start: July 23, 2020
-  * Requested completion: July 29, 2020
-* Step 4 - Advanced plotting (heatmaps, volcano plots, ordination)
-  * Start: July 30, 2020
-  * Requested completion: August 5, 2020
-* Step 5 - Learn to run R GUI code for exploratory figures
-  * Start: August 6, 2020
-  * Requested completion: August 12, 2020
+## Statistics overview
+
+Remember, the analysis will always have to be based on your study design and performed with the goal of testing your apriori hypotheses. The scripts in this repository are merely meant to provide an outline for you to begin your analysis and branch off as needed.
+
+The main steps of data exploration and statistical analysis we will cover are divided into four main steps:
+1) Loading count matrix results from bioinformatic analyses into R
+  * [Load kraken microbiome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_kraken_microbiome_data.R)
+  * [Load qiime microbiome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_qiime2_microbiome_data.R)
+  * [Load MEGARes resistome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_megares_resistome_data.R)
+2) Calculating summary statistics
+  * [Calculating summary statistics](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step2_R_Data_summary_statistics.R)
+3) Normalizing counts and creating exploratory figures
+  * [Count normalization](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Count_normalization.R)
+  * [Introduction to plotting with ggplot2](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Introduction_to_plotting.R)
+  * [Ordination plots](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Ordination.R)
+4) Running some common statistical tests
+  * [Basic stats with R](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_R_Basic_stats.R)
+  * [Differential abundance testing](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_Differential_abundance_testing.R)
+  * [Advanced plotting](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_Advanced_plotting.R)
+  
 
 
 ## Funding Information:
