@@ -134,19 +134,19 @@ Remember, the analysis will always have to be based on your study design and per
 
 The main steps of data exploration and statistical analysis we will cover are divided into four main steps:
 1) Loading count matrix results from bioinformatic analyses into R
-  * [Load kraken microbiome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_kraken_microbiome_data.R)
-  * [Load qiime microbiome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_qiime2_microbiome_data.R)
-  * [Load MEGARes resistome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_megares_resistome_data.R)
+    * [Load kraken microbiome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_kraken_microbiome_data.R)
+    * [Load qiime microbiome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_qiime2_microbiome_data.R)
+    * [Load MEGARes resistome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_megares_resistome_data.R)
 2) Calculating summary statistics
-  * [Calculating summary statistics](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step2_R_Data_summary_statistics.R)
+    * [Calculating summary statistics](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step2_R_Data_summary_statistics.R)
 3) Normalizing counts and creating exploratory figures
-  * [Count normalization](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Count_normalization.R)
-  * [Introduction to plotting with ggplot2](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Introduction_to_plotting.R)
-  * [Ordination plots](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Ordination.R)
+    * [Count normalization](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Count_normalization.R)
+    * [Introduction to plotting with ggplot2](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Introduction_to_plotting.R)
+    * [Ordination plots](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Ordination.R)
 4) Running some common statistical tests
-  * [Basic stats with R](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_R_Basic_stats.R)
-  * [Differential abundance testing](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_Differential_abundance_testing.R)
-  * [Advanced plotting](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_Advanced_plotting.R)
+    * [Basic stats with R](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_R_Basic_stats.R)
+    * [Differential abundance testing](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_Differential_abundance_testing.R)
+    * [Advanced plotting](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_Advanced_plotting.R)
   
 
 
