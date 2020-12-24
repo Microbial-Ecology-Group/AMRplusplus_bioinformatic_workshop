@@ -126,7 +126,7 @@ If you don't have RStudio installed, click on the link below to explore our test
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/HEAD)
 
 This link opens directly to an instance of RStudio
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/master?urlpath=rstudio)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/main?urlpath=rstudio)
 
 Otherwise, follow the instructions on this [tutorial for installing R and Rstudio](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/lessons/Installing_R_and_RStudio.md) on your personal computer.
 
