@@ -1,4 +1,4 @@
-# Lesson 1 - "Getting set up"
+# "Getting set up with R and R studio"
 
 ## Learning objectives
 * Describe R, RStudio, and environment.
@@ -253,9 +253,5 @@ To ensure you have the most up-to-date code,
 4. Click on Tools → Version Control → Pull branches
   * As long as you saved any changes you made with new file names, this will update everything else in the repository to catch up with the "master" branch.
 5. Follow the instructions in the script, "Lesson1_step4_R_file_exploration.R"
-
-### Step 4) Deliverable
-After finishing the task in Lesson 1 step 4, use the skills you've learned so far to answer the questions on the following survey:
-https://www.surveymonkey.com/r/XFS53GL
 
 
