@@ -96,7 +96,7 @@ The main steps of data exploration and statistical analysis we will cover are di
 
 
 
-### Resources:
+## Resources:
 MEG resources
 * [MEG bioinformatic term glossary](https://github.com/EnriqueDoster/MEG_intro_stats_course/blob/master/misc_resources/Glossary.md)
 * [AMR ++ pipeline overview](https://github.com/EnriqueDoster/MEG_intro_stats_course/blob/master/misc_resources/AMR%2B%2B_v2_pipeline_overview.pdf)
