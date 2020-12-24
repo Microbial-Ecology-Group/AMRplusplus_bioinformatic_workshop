@@ -45,6 +45,60 @@ Upon completion of these lessons, students will:
   * Analysis of similarities (ANOSIM)
   * Differential abundance testing using a zero-inflated Gaussian (ZIG) model
 
+
+## Bioinformatic overview
+
+Metagenomic sequencing approach determines the type of analysis you can perform:
+  * Shotgun metagenomic sequencing
+    * can analyze both the microbiome and resistome, in addition to other sequences such as plasmid-associated or virulence factors
+  * Target-enriched resistome sequencing (MEGARes baits)
+    * can only analyze the resistome
+  * 16S rRNA amplicon sequencing
+    * can only analyze the microbiome
+    
+In this repository, we'll show you examples of running variants of the AMR++ pipeline to achieve your bioinformatic analysis goals. We'll be using code found in [this repository of bioinformatic pipelines](https://github.com/EnriqueDoster/bioinformatic-nextflow-pipelines)
+  * AMR++ pipeline
+    * The [main_AmrPlusPlus_v2_withKraken.nf](https://github.com/EnriqueDoster/bioinformatic-nextflow-pipelines/blob/master/main_AmrPlusPlus_v2_withKraken.nf) script nalyzes shotgun metagenomic sequencing reads to characterize the microbiome using the taxanomic classier, [kraken2](https://github.com/DerrickWood/kraken2), and alignment of reads to our [MEGARes database](https://megares.meglab.org/) to characterize the resistome.
+    * The [main_AmrPlusPlus_v2.nf](https://github.com/EnriqueDoster/bioinformatic-nextflow-pipelines/blob/master/main_AmrPlusPlus_v2.nf) script is simply a subset of the entire pipeline and only performs the resistome analysis.
+  * [Qiime2 pipeline](https://qiime2.org/) 
+    * We use the Qiime2 pipeline to analyze 16S rRNA reads and export the results to a file format that we can use to analyze with R.
+
+
+## Statistics overview
+
+Remember, the analysis will always have to be based on your study design and performed with the goal of testing your apriori hypotheses. The scripts in this repository are merely meant to provide an outline for you to begin your analysis and branch off as needed.
+
+Using RStudio, download everything in this repository and change your working directory to the newly downloaded AMRplusplus_bioinformatic_workshop directory. 
+Start by opening the script on the main page, [Stats_overview_script.R](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/Stats_overview_script.R), and follow along for a brief explanation of how each of the scripts below fits into your analysis.
+
+If you don't have RStudio installed, click on the link below to explore our test dataset using Binder:
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/HEAD)
+
+This link opens directly to an instance of RStudio:
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/main?urlpath=rstudio)
+
+Otherwise, follow the instructions on this [tutorial for installing R and Rstudio](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/lessons/Installing_R_and_RStudio.md) on your personal computer.
+
+The main steps of data exploration and statistical analysis we will cover are divided into four main steps with associated scripts for each general step:
+1) Loading count matrix results from bioinformatic analyses into R
+    * [Load kraken microbiome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_kraken_microbiome_data.R)
+    * [Load qiime microbiome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_qiime2_microbiome_data.R)
+    * [Load MEGARes resistome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_megares_resistome_data.R)
+2) Calculating summary statistics
+    * [Calculating summary statistics](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step2_R_Data_summary_statistics.R)
+3) Normalizing counts and creating exploratory figures
+    * [Count normalization](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Count_normalization.R)
+    * [Introduction to plotting with ggplot2](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Introduction_to_plotting.R)
+    * [Ordination plots](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Ordination.R)
+4) Running some common statistical tests
+    * [Basic stats with R](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_R_Basic_stats.R)
+    * [Differential abundance testing](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_Differential_abundance_testing.R)
+    * [Advanced plotting](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_Advanced_plotting.R)
+  
+
+
+
 ### Resources:
 MEG resources
 * [MEG bioinformatic term glossary](https://github.com/EnriqueDoster/MEG_intro_stats_course/blob/master/misc_resources/Glossary.md)
@@ -96,60 +150,6 @@ Statistics resources
   * [Mitigating the adverse impact of batch effects in sample pattern detection](https://academic.oup.com/bioinformatics/article/34/15/2634/4916062)
   * [Identifying and mitigating batch effects in whole genome sequencing data](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-017-1756-z)
   * [Why Batch Effects Matter in Omics Data, and How to Avoid Them](https://www.cell.com/trends/biotechnology/pdf/S0167-7799(17)30036-7.pdf)
-
-## Bioinformatic overview
-
-Metagenomic sequencing approach determines the type of analysis you can perform:
-  * Shotgun metagenomic sequencing
-    * can analyze both the microbiome and resistome, in addition to other sequences such as plasmid-associated or virulence factors
-  * Target-enriched resistome sequencing (MEGARes baits)
-    * can only analyze the resistome
-  * 16S rRNA amplicon sequencing
-    * can only analyze the microbiome
-    
-In this repository, we'll show you examples of running variants of the AMR++ pipeline to achieve your bioinformatic analysis goals. We'll be using code found in [this repository of bioinformatic pipelines](https://github.com/EnriqueDoster/bioinformatic-nextflow-pipelines)
-  * AMR++ pipeline
-    * The [main_AmrPlusPlus_v2_withKraken.nf](https://github.com/EnriqueDoster/bioinformatic-nextflow-pipelines/blob/master/main_AmrPlusPlus_v2_withKraken.nf) script nalyzes shotgun metagenomic sequencing reads to characterize the microbiome using the taxanomic classier, [kraken2](https://github.com/DerrickWood/kraken2), and alignment of reads to our [MEGARes database](https://megares.meglab.org/) to characterize the resistome.
-    * The [main_AmrPlusPlus_v2.nf](https://github.com/EnriqueDoster/bioinformatic-nextflow-pipelines/blob/master/main_AmrPlusPlus_v2.nf) script is simply a subset of the entire pipeline and only performs the resistome analysis.
-  * [Qiime2 pipeline](https://qiime2.org/) 
-    * We use the Qiime2 pipeline to analyze 16S rRNA reads and export the results to a file format that we can use to analyze with R.
-
-
-## Statistics overview
-
-Remember, the analysis will always have to be based on your study design and performed with the goal of testing your apriori hypotheses. The scripts in this repository are merely meant to provide an outline for you to begin your analysis and branch off as needed.
-
-Using RStudio, download everything in this repository and change your working directory to the newly downloaded AMRplusplus_bioinformatic_workshop directory. 
-Start by opening the script on the main page, [Stats_overview_script.R](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/Stats_overview_script.R), and follow along for a brief explanation of how each of the scripts below fits into your analysis.
-
-If you don't have RStudio installed, click on the link below to explore our test dataset using Binder:
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/HEAD)
-
-This link opens directly to an instance of RStudio
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/main?urlpath=rstudio)
-
-Otherwise, follow the instructions on this [tutorial for installing R and Rstudio](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/lessons/Installing_R_and_RStudio.md) on your personal computer.
-
-The main steps of data exploration and statistical analysis we will cover are divided into four main steps with associated scripts for each general step:
-1) Loading count matrix results from bioinformatic analyses into R
-    * [Load kraken microbiome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_kraken_microbiome_data.R)
-    * [Load qiime microbiome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_qiime2_microbiome_data.R)
-    * [Load MEGARes resistome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_megares_resistome_data.R)
-2) Calculating summary statistics
-    * [Calculating summary statistics](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step2_R_Data_summary_statistics.R)
-3) Normalizing counts and creating exploratory figures
-    * [Count normalization](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Count_normalization.R)
-    * [Introduction to plotting with ggplot2](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Introduction_to_plotting.R)
-    * [Ordination plots](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step3_Ordination.R)
-4) Running some common statistical tests
-    * [Basic stats with R](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_R_Basic_stats.R)
-    * [Differential abundance testing](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_Differential_abundance_testing.R)
-    * [Advanced plotting](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_Advanced_plotting.R)
-  
-
-[![RStudio Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/EnriqueDoster/MEG_intro_stats_course/master?urlpath=rstudio)
-
-https://mybinder.org/v2/gh/EnriqueDoster/MEG_intro_stats_course/master?urlpath=rstudio
 
 
 
