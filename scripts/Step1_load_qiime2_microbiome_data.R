@@ -28,6 +28,7 @@ taxa.dt[, c('feature',
             'genus',
             'species') := tstrsplit(id, '; ', type.convert = TRUE, fixed = TRUE)]
 
+# This could be done in a simpler way, but we need to clean up the taxa.df before using it with phyloseq
 taxa.df <- as.data.frame(taxa.dt)
 taxa.df <- within(taxa.df, rm(id))
 row.names(taxa.df) <- taxa.df$feature

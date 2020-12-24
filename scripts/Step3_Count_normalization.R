@@ -211,7 +211,7 @@ plot_tss_qiime_phylum
 
 # First, we convert the phyloseq object to metagenomeSeq
 library(metagenomeSeq)
-microbiome.metaseq <- phyloseq_to_metagenomeSeq(filtered_microbiome.ps)
+microbiome.metaseq <- phyloseq_to_metagenomeSeq(qii) #filtered_microbiome.ps
 
 # Check out this object:
 microbiome.metaseq
