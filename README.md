@@ -71,10 +71,7 @@ Remember, the analysis will always have to be based on your study design and per
 Using RStudio, download everything in this repository and change your working directory to the newly downloaded AMRplusplus_bioinformatic_workshop directory. 
 Start by opening the script on the main page, [Stats_overview_script.R](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/Stats_overview_script.R), and follow along for a brief explanation of how each of the scripts below fits into your analysis.
 
-If you don't have RStudio installed, click on the link below to explore our test dataset using Binder:
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/HEAD)
-
-This link opens directly to an instance of RStudio:
+If you don't have RStudio installed, click on the link below to explore our test dataset using Binder and RStudio:
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/main?urlpath=rstudio)
 
