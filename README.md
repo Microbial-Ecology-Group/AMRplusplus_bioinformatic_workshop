@@ -15,13 +15,6 @@ Slack group: https://meg-research.slack.com
 [Dropbox link](https://www.dropbox.com/sh/1xvpvxecesddfsc/AADYGmwC1p52eBeYjy_4qJ_-a?dl=0)
   * This dropbox folder contains all of the videos from our zoom course sessions and recordings from a previous MEG bioinformatics workshop.
 
-
-[![Binder](https://mybinder.org/badge_logo.svg)](https://hub.gke.mybinder.org/user/enriquedoster-m-ro_stats_course-ag2p4r3f/tree)
-
-[![RStudio Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/EnriqueDoster/MEG_intro_stats_course/master?urlpath=rstudio)
-
-https://mybinder.org/v2/gh/EnriqueDoster/MEG_intro_stats_course/master?urlpath=rstudio
-
 ## Course content
 * [Course summary](#summary)
 * [Learning objectives](#learning-objectives)
@@ -126,7 +119,18 @@ In this repository, we'll show you examples of running variants of the AMR++ pip
 
 Remember, the analysis will always have to be based on your study design and performed with the goal of testing your apriori hypotheses. The scripts in this repository are merely meant to provide an outline for you to begin your analysis and branch off as needed.
 
-The main steps of data exploration and statistical analysis we will cover are divided into four main steps:
+Using RStudio, download everything in this repository and change your working directory to the newly downloaded AMRplusplus_bioinformatic_workshop directory. 
+Start by opening the script on the main page, [Stats_overview_script.R](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/Stats_overview_script.R), and follow along for a brief explanation of how each of the scripts below fits into your analysis.
+
+If you don't have RStudio installed, click on the link below to explore our test dataset using Binder:
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/HEAD)
+
+This link opens directly to an instance of RStudio
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/master?urlpath=rstudio)
+
+Otherwise, follow the instructions on this [tutorial for installing R and Rstudio](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/lessons/Installing_R_and_RStudio.md) on your personal computer.
+
+The main steps of data exploration and statistical analysis we will cover are divided into four main steps with associated scripts for each general step:
 1) Loading count matrix results from bioinformatic analyses into R
     * [Load kraken microbiome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_kraken_microbiome_data.R)
     * [Load qiime microbiome data](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step1_load_qiime2_microbiome_data.R)
@@ -142,8 +146,12 @@ The main steps of data exploration and statistical analysis we will cover are di
     * [Differential abundance testing](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_Differential_abundance_testing.R)
     * [Advanced plotting](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/scripts/Step4_Advanced_plotting.R)
   
-Here are some additional resources that could come in handy:
-  * [Tutorial for installing R and Rstudio](https://github.com/Microbial-Ecology-Group/AMRplusplus_bioinformatic_workshop/blob/main/lessons/Installing_R_and_RStudio.md)
+
+[![RStudio Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/EnriqueDoster/MEG_intro_stats_course/master?urlpath=rstudio)
+
+https://mybinder.org/v2/gh/EnriqueDoster/MEG_intro_stats_course/master?urlpath=rstudio
+
+
 
 ## Funding Information:
 The development of this tutorial was supported in part by USDA NIFA Grant No. 2018-51300-28563, University of Minnesota College of Veterinary Medicine, The VERO Program at Texas A&M University and West Texas A&M University, and the State of Minnesota Agricultural Research, Education, Extension and Technology Transfer program.
