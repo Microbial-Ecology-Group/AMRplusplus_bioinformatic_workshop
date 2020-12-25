@@ -1,4 +1,4 @@
-# Microbial Ecology Group (MEG) - AMR++ bionformatics workshop
+# Microbial Ecology Group (MEG) - AMR++ bioinformatics workshop
 ## Course syllabus
 Start Date: January 5, 2020
 
