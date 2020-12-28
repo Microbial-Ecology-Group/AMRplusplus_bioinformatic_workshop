@@ -9,7 +9,7 @@ Email: meglab.metagenomics@gmail.com
 
 Slack group: https://meg-research.slack.com
   * Join us here for general discussion and help with course content
-  * [Slack invite link](https://join.slack.com/t/meg-research/shared_invite/zt-ej7f576o-QfNwH_yfg0ljyvk3K~ORDg)
+  * [Slack invite link](https://join.slack.com/t/meg-research/shared_invite/zt-kqth4uio-S_Td1JvQakUvpgU~Ti9owg)
     * This link expires every 30 days, so let us know if it doesn't work for you.
 
 [Dropbox link](https://www.dropbox.com/sh/1xvpvxecesddfsc/AADYGmwC1p52eBeYjy_4qJ_-a?dl=0)
