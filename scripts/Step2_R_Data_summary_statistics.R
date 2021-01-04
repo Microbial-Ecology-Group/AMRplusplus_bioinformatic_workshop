@@ -202,6 +202,8 @@ plot_bar(phylum.ps.rel, fill= "phylum")
 ## Microbiome diversity indices 
 #
 
+
+
 # Alpha-diversity indices are a common measurement to summarize the composition of the microbiome and resistome.
 # "Richness" or "Observed" simply describes the number of unique taxa identified in a sample
 # On the other hand, we use "Shannon's index" or "Inverse Simpsons's index" to describe "evenness", or
@@ -227,102 +229,28 @@ plot_richness(phylum.ps, x = "Group", color = "Group", measures = c("Observed", 
 
 
 
-
 #
 ##
-### Loading the kraken2 microbiome results (shotgun reads)
-##
-#
-
-# Load the kraken count table                                        
-kraken_microbiome <- read.table('./data/kraken_analytic_matrix.csv', header=T, row.names=1, sep=',')
-
-# Convert to format that phyloseq likes with otu_table()                                      
-kraken_microbiome <- otu_table(kraken_microbiome, taxa_are_rows = TRUE)
-
-# Repeat similar steps to what we did with the qiime2 taxonomy
-kraken_taxonomy <- data.table(id=rownames(kraken_microbiome))
-kraken_taxonomy[, c('domain',
-                     'kingdom',
-                     'phylum',
-                     'class',
-                     'order',
-                     'family',
-                     'genus',
-                     'species') := tstrsplit(id, '|', type.convert = TRUE, fixed = TRUE)]
-
-# Conver to data.frame
-kraken_taxonomy <- as.data.frame(kraken_taxonomy)
-
-# Use the id variable to rename the row.names
-row.names(kraken_taxonomy) <- kraken_taxonomy$id
-# Remove the "id" column
-kraken_taxonomy <- within(kraken_taxonomy, rm(id))
-
-# Create kraken phyloseq object
-kraken_microbiome.ps <- merge_phyloseq(kraken_microbiome, tax_table(as.matrix(kraken_taxonomy)), sample_metadata)
-
-# We can now use the same functions as shown above with the 16S microbiome to explore the kraken microbiome counts
-plot_bar(kraken_microbiome.ps)
-
-# Estimating richness and diversity using the easy-to-use function estimate_richness()
-microbiome_shotgun_diversity_values <- estimate_richness(kraken_microbiome.ps)
-
-
-
-#
-##
-### Loading the resistome results (shotgun reads)
-##
-#
-                                         
-# Load MEGARes counts                                         
-amr <- read.table('./data/AMR_analytic_matrix.csv', header=T, row.names=1, sep=',')
-
-# We can convert our amr count object to the otu_table format required for phyloseq
-amr <- otu_table(amr, taxa_are_rows = TRUE)
-
-# Remember how we had to split up the taxa names for the microbiome features?
-# Well, our MEGARes annotation file allows us to skip that step.
-annotations <- read.table('data/megares_full_annotations_v2.0.csv', header=T, row.names=1, sep=",")
-                                                      
-annotations
-
-# However, if you didn't have the annotations file, we created the AMR gene accession header to provide the information you need.
-row.names(amr)
-
-# Use the feature variable to rename the row.names
-row.names(annotations)
-
-# We can now merge these objects to make a phyloseq object
-amr.ps <- merge_phyloseq(amr, tax_table(as.matrix(annotations)), sample_data(sample_metadata))
-
-# We can now use the same functions as shown above with the 16S microbiome to explore the resistome counts
-plot_bar(amr.ps)
-
-
-
-#
-##
-### Merge diversity values for the microbiome
+### Merge diversity values for the microbiome and resistome
 ##
 #
 
 
 # We can make a new column, named "SeqType" and give it the value of "16S"
-
-
 microbiome_16S_diversity_values <- microbiome_16S_diversity_values %>%
-  mutate(SeqType = "16S", Sample = row.names(microbiome_16S_diversity_values))
+  mutate(SeqType = "16S", DataType = "16S microbiome", Sample = row.names(microbiome_16S_diversity_values))
 
 # We can make a new column, named "SeqType" and give it the value of "shotgun"
 microbiome_shotgun_diversity_values <- microbiome_shotgun_diversity_values %>%
-  mutate(SeqType = "shotgun", Sample = row.names(microbiome_shotgun_diversity_values))
+  mutate(SeqType = "shotgun", DataType = "shotgun microbiome", Sample = row.names(microbiome_shotgun_diversity_values))
 
+# We can make a new column, named "SeqType" and give it the value of "shotgun"
+amr_shotgun_diversity_values <- amr_shotgun_diversity_values %>%
+  mutate(SeqType = "shotgun", DataType = "resistome", Sample = row.names(amr_shotgun_diversity_values))
 
 
 # Now we can merge these tables based on identical row
-combined_diversity_values <- bind_rows(microbiome_16S_diversity_values, microbiome_shotgun_diversity_values)
+combined_diversity_values <- bind_rows(microbiome_16S_diversity_values, microbiome_shotgun_diversity_values, amr_shotgun_diversity_values)
 
 # To help us better summarize the results, we can add the metadata information 
 # First, we need to add a "Sample" column in the sample_metadata like in the combined_diversity_values object
@@ -331,12 +259,6 @@ sample_metadata$Sample <- row.names(sample_metadata)
 # Now, we use left_join() to add the sample_metadata to the combined_diversity_values object
 combined_diversity_values <- left_join(combined_diversity_values, sample_metadata, by = "Sample")
 
-# Now try using "mutate" to get the average "Observed" and "Shannon" diversity values by SeqType
-# Modify the code below to answer questions on the online quiz
-# Check out this website for some more ways we can use "dplyr" to summarize our data: https://blog.dominodatalab.com/manipulating-data-with-dplyr/
-combined_diversity_values %>%
-  group_by(SeqType) %>%
-  summarize(mean_observed = mean(Observed), mean_shannon = mean(Shannon))
 
 
 

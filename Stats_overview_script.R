@@ -32,27 +32,28 @@ source('scripts/load_R_packages.R')
 # reads with qiime2.
 
 # First, we'll need to load the sample "metadata" file. This file must contain the names for all
-# of your samples and any other relevant information to help in our analysis.
-sample_metadata <- read.table('./data/sample_metadata.csv', header=T, sep=',', row.names = 1, quote = "")
+# of your samples in the first column and any other relevant information to help in our analysis.
+sample_metadata <- read.table('./data/proj7_sample_metadata.csv', header=T, sep=',', row.names = 1, quote = "")
 sample_metadata # Run the object name to get more information about the file we just loaded
-
-# Change name of the first column
-colnames(sample_metadata)[1] <- "Sample_name"
 
 # Now, let's load the kraken microbiome results.
 # Here's an example of the file we are loading in:
-kraken_microbiome <- read.table('./data/kraken_analytic_matrix.csv', header=T, row.names=1, sep=',', quote = "")
+amr <- read.table('./data/shotgun_AMR_analytic_matrix.csv', header=T, row.names=1, sep=',', quote = "")
 # Notice samples are on the columns and taxa are the rows
-colnames(kraken_microbiome)
-rownames(kraken_microbiome)
+colnames(amr)
+rownames(amr)
 
-# The command below runs all of the R code in the script, "scripts/load_kraken_microbiome_data.R"
+# The command below runs all of the R code in the script, "scripts/Step1_load_megares_resistome_data.R"
+source("scripts/Step1_load_megares_resistome_data.R")
+amr.ps # This phyloseq object contains the resistome results, taxa table, and metadata
+
+# Next, we'll perform similar steps for the microbiome data with another script
 source("scripts/Step1_load_kraken_microbiome_data.R") 
 kraken_microbiome.ps # This phyloseq object contains the microbiome results, taxa table, and metadata
 
-# Next, we'll perform similar steps for the resistome data with another script
-source("scripts/Step1_load_megares_resistome_data.R")
-amr.ps # This phyloseq object contains the resistome results, taxa table, and metadata
+# For the target enriched data, the resistome results will be loaded the same way as above
+source("scripts/Step1_load_TE_megares_resistome_data.R")
+TE_amr.ps # This phyloseq object contains the resistome results, taxa table, and metadata
 
 # Finally, we'll do the same for the qiime2 microbiome results
 source("scripts/Step1_load_qiime2_microbiome_data.R")
@@ -62,9 +63,10 @@ qiime_microbiome.ps # This phyloseq object contains the microbiome results, taxa
 # We now have these 3 phyloseq objects to use for further analysis:
 # kraken_microbiome.ps
 # amr.ps
+# TE_amr.ps
 # qiime_microbiome.ps
 
-# You can access the various components of the phyloseq object using the following functions
+# You can access the various components of the phyloseq object using the following functions:
 sample_data(qiime_microbiome.ps)
 otu_table(qiime_microbiome.ps)
 tax_table(qiime_microbiome.ps)

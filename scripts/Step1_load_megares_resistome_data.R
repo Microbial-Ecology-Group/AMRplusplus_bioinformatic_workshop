@@ -15,7 +15,7 @@ library("vegan")
 #
                                          
 # Load MEGARes counts                                         
-amr <- read.table('./data/AMR_analytic_matrix.csv', header=T, row.names=1, sep=',', quote = "")
+amr <- read.table('./data/shotgun_AMR_analytic_matrix.csv', header=T, row.names=1, sep=',', quote = "")
 # We can convert our amr count object to the otu_table format required for phyloseq
 amr <- otu_table(amr, taxa_are_rows = TRUE)
 annotations <- read.table('data/megares_full_annotations_v2.0.csv', header=T, row.names=1, sep=",", quote = "")
@@ -25,4 +25,5 @@ amr.ps <- merge_phyloseq(amr, tax_table(as.matrix(annotations)), sample_data(sam
 
 # Estimating richness and diversity using the easy-to-use function estimate_richness()
 amr_shotgun_diversity_values <- estimate_richness(amr.ps)
+
 
