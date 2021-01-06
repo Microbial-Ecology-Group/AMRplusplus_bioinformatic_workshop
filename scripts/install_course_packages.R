@@ -8,6 +8,8 @@ install.packages(c("dplyr","ggplot2","data.table","tidyr","forcats", "vegan","pl
                    "pheatmap","dendsort","ggrepel","ggpubr","Rtools","tidyverse","ggthemes"))
 
 # Install "pairwiseAdonis" from github for adding pairwise comparisons to models build with the adonis() function
+install.packages('devtools')
+library(devtools)
 install_github("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
 library(pairwiseAdonis)
 
