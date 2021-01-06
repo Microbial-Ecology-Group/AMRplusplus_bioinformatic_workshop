@@ -1,9 +1,5 @@
-##### Set up environment
-library("phyloseq")
-library("dplyr")
-library("ggplot2")
-library("data.table")
-
+# Load required libraries
+source('scripts/load_R_packages.R')
 # Load qiime2 data
 source("scripts/Step1_load_qiime2_microbiome_data.R")
 # Check out this new phyloseq object
@@ -189,6 +185,9 @@ plot.phylum.rel.bar
 
 #
 ##
-### Use this area below to try the methods you just learned, but using another 
+### Use this area below to try the methods you just learned, but using other metadata variables
 ##
 #
+sample_data(qiime_microbiome.ps)$Sequencing_type
+sample_data(qiime_microbiome.ps)$Mean_phred_score
+sample_data(qiime_microbiome.ps)$Collectors

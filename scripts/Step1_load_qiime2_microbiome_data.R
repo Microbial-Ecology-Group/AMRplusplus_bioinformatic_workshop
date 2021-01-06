@@ -1,12 +1,5 @@
-##### Set up environment
-library("phyloseq")
-library("dplyr")
-library("ggplot2")
-library("data.table")
-library("tidyr")
-library("forcats")
-library("vegan")
-
+# Load required libraries
+source('scripts/load_R_packages.R')
 #
 ##
 ### Load in the metadata file

@@ -1,3 +1,6 @@
+# Load required libraries
+source('scripts/load_R_packages.R')
+
 #
 ##
 ### Loading the resistome results (shotgun reads)

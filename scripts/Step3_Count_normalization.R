@@ -1,6 +1,11 @@
-# Load the data
-# This script also loads any necessary libraries
-source("./scripts/load_data.R")
+# Load required libraries
+source('scripts/load_R_packages.R')
+# Load qiime2 data
+source("scripts/Step1_load_qiime2_microbiome_data.R")
+# Check out this new phyloseq object
+qiime_microbiome.ps # This phyloseq object contains the microbiome results, taxa table, and metadata
+
+
 
 # So far, we've only used raw counts of "mapped" or "aligned" reads.
 # In general, we use raw counts to report mapping statistics and to calculate diversity indices.
@@ -15,11 +20,11 @@ source("./scripts/load_data.R")
 # While we normalize counts based on the entire dataset (prior to taxa aggregation), in this step
 # we'll aggregate counts to the phylum level for easier processing and visualization.
 # If you are curious, you can try plotting the entire dataset to test how your computer handles it. 
-phylum_qiime.ps <- tax_glom(microbiome.ps, "phylum")
+phylum_qiime.ps <- tax_glom(qiime_microbiome.ps, "phylum")
 
 # Just visually, we can observe differences in the number of total mapped reads between samples
 plot_raw_qiime_phylum <- plot_bar(phylum_qiime.ps, fill = "phylum") + 
-  facet_wrap(~ Group, scales = "free_x") +
+  facet_wrap(~ Sample_type, scales = "free_x") +
   labs(title= "Raw qiime microbiome counts") +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_text(size = 6, angle = 45),
@@ -70,7 +75,7 @@ clean_phylum_qiime.ps = prune_taxa(goodTaxa, phylum_qiime.ps)
 
 # Notice, just the phylum label "p__" is gone.
 plot_bar(clean_phylum_qiime.ps, fill = "phylum") + 
-  facet_wrap(~ Group, scales = "free_x") +
+  facet_wrap(~ Sample_type, scales = "free_x") +
   theme_classic()
 
 
@@ -79,11 +84,12 @@ plot_bar(clean_phylum_qiime.ps, fill = "phylum") +
 #
 
 # Alternatively, you might want to only keep samples containing more than X counts
-test_clean_phylum_qiime.ps = prune_samples(sample_sums(clean_phylum_qiime.ps)>=100000, clean_phylum_qiime.ps)
+test_clean_phylum_qiime.ps = prune_samples(sample_sums(clean_phylum_qiime.ps)>=4000, clean_phylum_qiime.ps)
+test_clean_phylum_qiime.ps
 
 # Notice, one sample was removed.
 plot_bar(test_clean_phylum_qiime.ps, fill = "phylum") + 
-  facet_wrap(~ Group, scales = "free_x") +
+  facet_wrap(~ Sample_type, scales = "free_x") +
   theme_classic()
 
 
@@ -97,7 +103,7 @@ firmicutes_microbiome.ps = subset_taxa(clean_phylum_qiime.ps, phylum=="p__Firmic
 # The error you get is due to the phylogenetic tree that we can't subset from the full dataset.
 
 plot_bar(firmicutes_microbiome.ps, fill = "phylum") + 
-  facet_wrap(~ Group, scales = "free_x") +
+  facet_wrap(~ Sample_type, scales = "free_x") +
   theme_classic()
 
 #
@@ -106,14 +112,14 @@ plot_bar(firmicutes_microbiome.ps, fill = "phylum") +
 
 # Prior to using the full dataset for count normalization, we might choose a threshold of 
 # counts that each taxa much meet. For a simple example, we'll use "50" counts as the minimum threshold.
-filtered_microbiome.ps = filter_taxa(microbiome.ps, function(x) sum(x) > 50, TRUE)
+filtered_microbiome.ps = filter_taxa(qiime_microbiome.ps, function(x) sum(x) > 50, TRUE)
 # Notice the change in taxa number, aggregate to phylum level
 filtered_phylum_qiime.ps <- tax_glom(filtered_microbiome.ps, "phylum")
 
-# Plot mapped counts for each sample, faceted by treatment group
+# Plot mapped counts for each sample, faceted by treatment Sample_type
 plot_filtered_raw_qiime_phylum <- plot_bar(filtered_phylum_qiime.ps, fill = "phylum") + 
-  facet_wrap(~ Group, scales = "free_x") +
-  labs(title= "Raw qiime microbiome counts") +
+  facet_wrap(~ Sample_type, scales = "free_x") +
+  labs(title= "Raw 16S microbiome counts") +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_text(size = 6, angle = 45),
         panel.background = element_blank(),
@@ -156,13 +162,13 @@ rarefied_qiime.ps <- rarefy_even_depth(filtered_microbiome.ps, sample.size = min
 
 # Here's an example of what it would look like if you try rarefying your raw count data.
 # Notice that some OTUs (ASVs) are lost after rarefying.
-test_rarefied_qiime.ps <- rarefy_even_depth(microbiome.ps, sample.size = min(sample_sums(microbiome.ps)))
+test_rarefied_qiime.ps <- rarefy_even_depth(qiime_microbiome.ps, sample.size = min(sample_sums(qiime_microbiome.ps)))
 
 # Aggregate counts to phylum
 rarefied_phylum_qiime.ps <- tax_glom(rarefied_qiime.ps, "phylum")
 # Bar plot to visualize results
 plot_rarefied_qiime_phylum <- plot_bar(rarefied_phylum_qiime.ps, fill = "phylum") + 
-  facet_wrap(~ Group, scales = "free_x") +
+  facet_wrap(~ Sample_type, scales = "free_x") +
   labs(title= "Rarefied qiime microbiome counts") +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_text(size = 6, angle = 45),
@@ -185,7 +191,7 @@ tss_normalized_phylum_qiime.ps <- tax_glom(tss_normalized_qiime.ps, "phylum")
 
 # Notice the y-axis values are counts and not proportions.
 plot_tss_qiime_phylum <- plot_bar(tss_normalized_phylum_qiime.ps, fill = "phylum") + 
-  facet_wrap(~ Group, scales = "free_x") +
+  facet_wrap(~ Sample_type, scales = "free_x") +
   labs(title= "TSS normalized qiime microbiome counts") +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_text(size = 8, angle = 45),
@@ -231,7 +237,7 @@ CSS_normalized_phylum_qiime.ps <- tax_glom(CSS_normalized_qiime.ps, "phylum")
 
 # Notice the y-axis values are counts and not proportions.
 plot_css_qiime_phylum <- plot_bar(CSS_normalized_phylum_qiime.ps, fill = "phylum") + 
-  facet_wrap(~ Group, scales = "free_x") +
+  facet_wrap(~ Sample_type, scales = "free_x") +
   labs(title= "CSS normalized qiime microbiome counts") +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_text(size = 6, angle = 45),
@@ -254,7 +260,7 @@ median_normalized_phylum_qiime.ps <- tax_glom(median_normalized_qiime.ps, "phylu
 
 # Notice the y-axis values are counts and not proportions.
 plot_bar(median_normalized_phylum_qiime.ps, fill = "phylum") + 
-  facet_wrap(~ Group, scales = "free_x") +
+  facet_wrap(~ Sample_type, scales = "free_x") +
   theme_classic()
 
 

@@ -243,8 +243,7 @@ plot_bar(rel_phylum_qiime.ps, fill= "phylum") +
 #
 # To compare the microbiome composition between samples, we can calculate the "Bray-Curtis" distance
 # between samples using the "ordinate()" function.
-ordination_phylum_bray <- ordinate(CSS_normalized_phylum_qiime.ps, method = "NMDS" , distance="bray")
-
+ordination_phylum_bray <- ordinate(CSS_normalized_phylum_qiime.ps, method = "NMDS", distance="bray", trymax= 1000, k=3)
 # We can then use "plot_ordination()" to plot the distance matrix
 # We specify that we want to compare "samples" and color the points by the "Sample_type" metadata variable
 plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "samples",color = "Sample_type")
