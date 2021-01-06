@@ -33,10 +33,10 @@ source('scripts/load_R_packages.R')
 
 # First, we'll need to load the sample "metadata" file. This file must contain the names for all
 # of your samples in the first column and any other relevant information to help in our analysis.
-sample_metadata <- read.table('./data/proj7_sample_metadata.csv', header=T, sep=',', row.names = 1, quote = "")
+sample_metadata <- read.table('./data/megarich_sample_metadata.csv', header=T, sep=',', row.names = 1, quote = "")
 sample_metadata # Run the object name to get more information about the file we just loaded
 
-# Now, let's load the kraken microbiome results.
+# Now, let's load the AMR resistome results.
 # Here's an example of the file we are loading in:
 amr <- read.table('./data/shotgun_AMR_analytic_matrix.csv', header=T, row.names=1, sep=',', quote = "")
 # Notice samples are on the columns and taxa are the rows
@@ -90,27 +90,13 @@ tax_table(qiime_microbiome.ps)
 # Summarize for entire kraken microbiome dataset
 
 # Notice we can access the metadata file columns by combining the "sample_data()" function and the $
-# to call out a specific column, in this case "X16S_Raw_paired_reads"
-sample_data(qiime_microbiome.ps)$X16S_Raw_paired_reads
+# to call out a specific column, in this case "Raw_paired_reads"
+sample_data(qiime_microbiome.ps)$Raw_paired_reads
 
 # We can make simple calculations using built-in R functions like "sum(), mean(), etc"
-# This is the total sum of raw paired reads across our entire dataset
-sum(sample_data(qiime_microbiome.ps)$X16S_Raw_paired_reads)
+# This is the total sum of raw paired reads across our dataset
+sum(sample_data(qiime_microbiome.ps)$Raw_paired_reads)
 
-# Next, we might want to make multiple calculations on our metadata variables
-# Here, we can use the "dplyr" package with the "%>%" function and the "summarize()" function as shown below:
-sample_data(qiime_microbiome.ps) %>%
-  summarize(total_16S_counts = sum(X16S_Raw_paired_reads), mean_16S_counts = mean(X16S_Raw_paired_reads),
-            min_16S_counts = min(X16S_Raw_paired_reads),max_16S_counts = max(X16S_Raw_paired_reads),
-            median_16S_counts = median(X16S_Raw_paired_reads))
-
-# We can group our summary statistics by specific metadata variables by adding the "group_by()" function
-# Ignore the warning about the R class, this shouldn't affect your downstream analysis
-sample_data(qiime_microbiome.ps) %>%
-  group_by(Group) %>% 
-  summarize(total_16S_counts = sum(X16S_Raw_paired_reads), mean_16S_counts = mean(X16S_Raw_paired_reads),
-            min_16S_counts = min(X16S_Raw_paired_reads),max_16S_counts = max(X16S_Raw_paired_reads),
-            median_16S_counts = median(X16S_Raw_paired_reads))
 
 # We have many other metadata variables to use for further analysis such as the # of reads after QC filtering
 # total non-host reads, and the number of mapped reads, to name a few. If you write up your data for 
@@ -119,21 +105,10 @@ sample_data(qiime_microbiome.ps) %>%
 
 
 #
-## Diversity measures
+## Alpha diversity measures
 #
-microbiome_16S_diversity_values <- estimate_richness(kraken_microbiome.ps)
-microbiome_16S_diversity_values$Sample <- row.names(microbiome_16S_diversity_values)
-
-# Remember, that with phyloseq objects have to convert to matrix first, then to dataframe
-sample_metadata <- as.data.frame(as(sample_data(kraken_microbiome.ps), "matrix"))
-
-# Make a column "Sample" to join the metadata file with the diversity indices
-sample_metadata$Sample <- row.names(sample_data(sample_metadata))
-
-# Now, we use left_join() to add the sample_metadata to the combined_diversity_values object
-microbiome_16S_diversity_values <- left_join(microbiome_16S_diversity_values,sample_metadata, by = "Sample")
-
-
+qiime_microbiome_16S_diversity_values <- estimate_richness(qiime_microbiome.ps)
+qiime_microbiome_16S_diversity_values
 
 #
 ## Agglomerate ASV counts to different taxonomic levels
@@ -164,13 +139,22 @@ qiime_phylum.ps
 # In this section, we'll go over how to normalize the microbiome results and create some exploratory
 # figures to further explore your data. First, we'll start with some figures to visualize summary statistics.
 
+# Using base graphics
+# (Y ~ X)
+boxplot(sample_data(qiime_microbiome.ps)$Mean_phred_score ~ sample_data(qiime_microbiome.ps)$Sample_type)
+
+
 #
-## Plot boxplot of raw paired reads by Group
+## Use ggplot to create boxplot of raw paired reads by Sample_type
 #
-ggplot(sample_data(qiime_microbiome.ps), aes(x = Group , y = X16S_Raw_paired_reads, color = Group)) + 
+ggplot(sample_data(qiime_microbiome.ps), aes(x = Sample_type , y = Raw_paired_reads, color = Sample_type)) + 
+  geom_boxplot()
+
+# Like ggplot object, you can keep adding "layers" to modify the script
+ggplot(sample_data(qiime_microbiome.ps), aes(x = Sample_type , y = Raw_paired_reads, color = Sample_type)) + 
   geom_boxplot() +
   geom_jitter(width = 0.1) +
-  labs(title = "16S Metagenomic sequencing reads", x = "Treatment group", y = "raw paired reads") + 
+  labs(title = "16S Metagenomic sequencing reads", x = "Sample type", y = "raw paired reads") + 
   theme(axis.text.x = element_text( size = 18),
         axis.text.y = element_text(size = 18),
         plot.title = element_text(hjust = 0.5),
@@ -178,10 +162,10 @@ ggplot(sample_data(qiime_microbiome.ps), aes(x = Group , y = X16S_Raw_paired_rea
 #
 ## Diversity indices boxplots
 #
-ggplot(microbiome_16S_diversity_values, aes(x = Group, y = Observed, color = Group)) +
+ggplot(microbiome_16S_diversity_values, aes(x = Sample_type, y = Observed, color = Sample_type)) +
   geom_boxplot() +
   geom_point() +
-  labs(title = "Unique features by treatment group", x = "Treatment group", y = "Observed features") + 
+  labs(title = "Unique features by treatment group", x = "Sample type", y = "Observed features") + 
   theme_classic()
 
 
@@ -191,7 +175,7 @@ ggplot(microbiome_16S_diversity_values, aes(x = Group, y = Observed, color = Gro
 # Just visually, we can observe differences in the number of total mapped reads between samples
 #
 plot_raw_qiime_phylum <- plot_bar(qiime_phylum.ps, fill = "phylum") + 
-  facet_wrap(~ Group, scales = "free_x") +
+  facet_wrap(~ Sample_type, scales = "free_x") +
   labs(title= "Raw 16S microbiome counts") +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_text(size = 6, angle = 45),
@@ -224,7 +208,7 @@ CSS_normalized_phylum_qiime.ps <- tax_glom(CSS_normalized_qiime.ps, "phylum")
 
 # Notice the y-axis values are counts and not proportions.
 plot_css_qiime_phylum <- plot_bar(CSS_normalized_phylum_qiime.ps, fill = "phylum") + 
-  facet_wrap(~ Group, scales = "free_x") +
+  facet_wrap(~ Sample_type, scales = "free_x") +
   labs(title= "CSS normalized qiime microbiome counts") +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_text(size = 6, angle = 45),
@@ -251,7 +235,7 @@ rel_phylum_qiime.ps <- transform_sample_counts(CSS_normalized_phylum_qiime.ps, f
 
 # We can plot these results, notice the y-axis in these relative abundance plots
 plot_bar(rel_phylum_qiime.ps, fill= "phylum") +
-  facet_wrap(~ Group, scales = "free_x")
+  facet_wrap(~ Sample_type, scales = "free_x")
 
 
 #
@@ -262,8 +246,8 @@ plot_bar(rel_phylum_qiime.ps, fill= "phylum") +
 ordination_phylum_bray <- ordinate(CSS_normalized_phylum_qiime.ps, method = "NMDS" , distance="bray")
 
 # We can then use "plot_ordination()" to plot the distance matrix
-# We specify that we want to compare "samples" and color the points by the "Group" metadata variable
-plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "samples",color = "Group")
+# We specify that we want to compare "samples" and color the points by the "Sample_type" metadata variable
+plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "samples",color = "Sample_type")
 
 
 #
@@ -285,16 +269,16 @@ plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "
 # of sequenced reads between samples groups. This test could similarly be used to test for differences 
 # between the total number of mapped reads to the microbiome and resistome, or comparing 
 
-# Test for differences in sequencing depth by Group
+# Test for differences in sequencing depth by Sample_type
 # The format is wilcox.test( Y numeric values ~ X grouping factor)
 # Here, we'll compare the number of raw reads between treatment groups
-wilcox.test(sample_data(CSS_normalized_phylum_qiime.ps)$X16S_Raw_paired_reads ~ sample_data(CSS_normalized_phylum_qiime.ps)$Group)
+wilcox.test(sample_data(CSS_normalized_phylum_qiime.ps)$Raw_paired_reads ~ sample_data(CSS_normalized_phylum_qiime.ps)$Sample_type)
 
 # Wilcoxon tests are useful for comparisons between two groups, but you might have to test between 
 # more than two groups, such as sequencing lanes, so we can use generalized linear models, glm():
-glm(sample_data(CSS_normalized_phylum_qiime.ps)$X16S_Raw_paired_reads ~ sample_data(CSS_normalized_phylum_qiime.ps)$shotgun_seq_lane)
+glm(sample_data(CSS_normalized_phylum_qiime.ps)$Raw_paired_reads ~ sample_data(CSS_normalized_phylum_qiime.ps)$shotgun_seq_lane)
 # We need to use "summary()" to view the results
-summary(glm(sample_data(CSS_normalized_phylum_qiime.ps)$X16S_Raw_paired_reads ~ sample_data(CSS_normalized_phylum_qiime.ps)$shotgun_seq_lane))
+summary(glm(sample_data(CSS_normalized_phylum_qiime.ps)$Raw_paired_reads ~ sample_data(CSS_normalized_phylum_qiime.ps)$shotgun_seq_lane))
 
 #
 ## Ordination testing
@@ -302,9 +286,9 @@ summary(glm(sample_data(CSS_normalized_phylum_qiime.ps)$X16S_Raw_paired_reads ~ 
 # We can use analysis of similarities (ANOSIM) to test for significant clustering between samples from 
 # different groups. 
 # Here, we'll test by the "Group" variable
-group_variable = get_variable(CSS_normalized_phylum_qiime.ps,"Group")
+group_variable = get_variable(CSS_normalized_phylum_qiime.ps,"Sample_type")
 # Use the anosim() function
-anosim(distance(CSS_normalized_phylum_qiime.ps, "bray"), group_variable)
+anosim(distance(CSS_normalized_phylum_qiime.ps, "bray"), Sample_type_variable)
 
 
 #

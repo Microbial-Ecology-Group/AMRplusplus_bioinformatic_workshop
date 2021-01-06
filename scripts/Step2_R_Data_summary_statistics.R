@@ -4,141 +4,57 @@ library("dplyr")
 library("ggplot2")
 library("data.table")
 
-# Look at your Global Environment panel (usually top right)
-# Unless you are saving the Workspace with R objects you created previously, this panel should be empty.
-# If it isn't empty, we can remove all of those R objects and run our script from last week to re-load each R object.
-
-# Let's check for any variables in your workspace
-ls() # If you don't have any variables created, this will show "character(0)"
-
-# To delete them all, we have to use the 
-rm(list=ls())  # If your environment is empty already, this won't show anything
-
-#
-##
-### Sample metadata
-##
-#
-
-# Load sample metadata
-sample_metadata <- read.table('./data/Lesson2_sample_metadata.csv', header=T, sep=',', row.names = 1)
-
-# View the sample metadata again. Notice how variables starting with numeric values (16S) now have an added X to their name
-# R prefers that column names and row names not start with a numeric value.
-sample_metadata
-
-# We can use the hist() function to view the distribution of 16S_Raw_paired_reads and Shotgun_raw_reads
-hist(sample_metadata$X16S_Raw_paired_reads)
-hist(sample_metadata$Shotgun_raw_reads)
-
-# Now we can summarize counts by treatment using tools in "dplyr" like group_by() and summarize()
-# Notice, we use "%>% to tell R that the next row is still part of the same command. This is specific to the dplyr package.
-sample_metadata %>%
-  group_by(Group) %>% # the name of the function allows us to understand that we are grouping samples based on the "Group" variable
-  summarize(total_16S_counts = sum(X16S_Raw_paired_reads), mean_16S_counts = mean(X16S_Raw_paired_reads))
-
-# As another example, we can use the mutate() function to create new variables
-# Below, we make a new variable to calculate the percent of shotgun reads that were removed from raw reads.
-sample_metadata %>%
-  mutate(percent_host_removed = (Shotgun_raw_reads - Shotgun_nonhost_reads) / Shotgun_nonhost_reads)
-
-
-#
-##
-### 16S microbiome results
-##
-#
-
-# We import the .biom as in Lesson 1 step 4
-microbiome <- import_biom("data/Exported_16S_qiime2_results/Lesson2_16S_asv_table.biom")
-
-# We'll now  work to merge our phyloseq object with:
-# updated taxa file, 
-# metadata file
-# and an additional phylogenetic tree that is part of the qiime2 output
-
-str(microbiome) # only contains the counts right now
-
-#
-## Editing the 16S microbiome taxonomy file
-#
-
-# Load the taxonomy file from qiime2
-taxa <- read.table("data/Exported_16S_qiime2_results/Lesson2_taxonomy.tsv", header=T, row.names=1, sep='\t')
-
-
-# We'll change the rownames of the taxa to include entire taxonomic lineage in the first column
-# We'll paste together these values and seperate them with the same format as in the lineage '; '
-row.names(taxa) # This is what the row.names look like before
-row.names(taxa) <- paste(row.names(taxa),taxa[,1], sep= '; ')
-row.names(taxa) # This is what the row.names look like after editing
-
-# There are many ways to do this next step, but we use the data.table library and make the object just using the new rownames we made
-taxa.dt <- data.table(id=rownames(taxa)) # we'll make a column with the name "id"
-
-
-# This part is a little more complicated, but you should be able to adopt this code for other similar uses.
-# Notice that we are specifying the function after the comma, so in the columns.
-# The main function we are using is "tstrsplit()". If you look at the documentation, you'll see that 
-# "This is a convenient wrapper function to split a column using strsplit and assign the transposed result to individual columns"
-# Here, we specify that we are splitting the "id" column by the characters "; "
-# To the left of the ":=" we specify the column names for the values split from the id column
-taxa.dt[, c('feature',
-            'kingdom',
-            'phylum',
-            'class',
-            'order',
-            'family',
-            'genus',
-            'species') := tstrsplit(id, '; ', type.convert = TRUE, fixed = TRUE)]
-
-# Now, we can see that the taxa.dt object has columns for each taxonomic level
-taxa.dt
-
-# We'll convert it back to data.frame. 
-# Side note, I personally really like using "data.table" specially with really large datasets. 
-# However, we won't explore this package much in this course because it functions like SQL and could require it's own course.
-taxa.df <- as.data.frame(taxa.dt)
-
-# erase the id column  
-taxa.df <- within(taxa.df, rm(id))
-
-# Use the feature variable to rename the row.names
-row.names(taxa.df) <- taxa.df$feature
-taxa.df <- within(taxa.df, rm(feature))
-
-
-# We can use the read_tree() function to load the phylogenetic tree created with qiime2
-# We'll use this tree in later to calculate beta diversity indices that can incorporate phylogenetic tree distances
-microbiome_phylo_tree <- read_tree("./data/Exported_16S_qiime2_results/Lesson2_tree.nwk")
-
-# Due to requirements from phyloseq, we have to
-## convert the taxa.df object to a matrix and we have to specify that this is the tax_table()
-## specify that the sample_16S_metadata object is the sample_data()
-## specity that the microbiome_phylo_tree object is the phy_tree()
-microbiome.ps <- merge_phyloseq(microbiome, phy_tree(microbiome_phylo_tree), tax_table(as.matrix(taxa.df)), sample_data(sample_metadata))
-
-
+# Load qiime2 data
+source("scripts/Step1_load_qiime2_microbiome_data.R")
 # Check out this new phyloseq object
-microbiome.ps
+qiime_microbiome.ps # This phyloseq object contains the microbiome results, taxa table, and metadata
+
+
 # We can access the individual components like this:
 # Look at this site for a few more examples: https://joey711.github.io/phyloseq/import-data.html
-otu_table(microbiome.ps)
-tax_table(microbiome.ps)
-sample_data(microbiome.ps)
-phy_tree(microbiome.ps)
+otu_table(qiime_microbiome.ps)
+tax_table(qiime_microbiome.ps)
+sample_data(qiime_microbiome.ps)
+phy_tree(qiime_microbiome.ps)
 
 # Here are some other functions that provide information about the phyloseq object
 # Just the sample names
-sample_names(microbiome.ps)
+sample_names(qiime_microbiome.ps)
 # Taxonomic rank names
-rank_names(microbiome.ps)
+rank_names(qiime_microbiome.ps)
 # Variables in the metadata
-sample_variables(microbiome.ps)
+sample_variables(qiime_microbiome.ps)
 # Easy sums of counts by sample
-sample_sums(microbiome.ps)
+sample_sums(qiime_microbiome.ps)
 
 # How can we get the total counts by adding across all samples?
+
+
+
+
+
+#
+##
+### Metadata exploration
+##
+#
+#
+
+
+# Next, we might want to make multiple calculations on our metadata variables
+# Here, we can use the "dplyr" package with the "%>%" function and the "summarize()" function as shown below:
+sample_data(qiime_microbiome.ps) %>%
+  summarize(total_16S_counts = sum(Raw_paired_reads), mean_16S_counts = mean(Raw_paired_reads),
+            min_16S_counts = min(Raw_paired_reads),max_16S_counts = max(Raw_paired_reads),
+            median_16S_counts = median(Raw_paired_reads))
+
+# We can group our summary statistics by specific metadata variables by adding the "group_by()" function
+# Ignore the warning about the R class, this shouldn't affect your downstream analysis
+sample_data(qiime_microbiome.ps) %>%
+  group_by(Sample_type) %>% 
+  summarize(total_16S_counts = sum(Raw_paired_reads), mean_16S_counts = mean(Raw_paired_reads),
+            min_16S_counts = min(Raw_paired_reads),max_16S_counts = max(Raw_paired_reads),
+            median_16S_counts = median(Raw_paired_reads))
 
 
 
@@ -147,22 +63,22 @@ sample_sums(microbiome.ps)
 #
 
 # Using tax_glom(), we can easily aggregate counts to different levels (taxonomic or AMR annotation levels)
-phylum.ps <- tax_glom(microbiome.ps, "phylum")
-phylum.ps
+qiime_phylum.ps <- tax_glom(qiime_microbiome.ps, "phylum")
+qiime_phylum.ps
 
 # We can get sample counts at the phylum level.
-sum(sample_sums(phylum.ps))
+sum(sample_sums(qiime_phylum.ps))
 
 # By summing counts at each taxonomic level, we can observe the reduction in sample counts in lower taxonomic levels.
 # Note the stop sign on the right hand side of the Console panel, when you see this it means R is running a command.
 # You can click on the stop sign to stop the run.
-species.ps <- tax_glom(microbiome.ps, "species") # Depending on your computer and file size, this can take a couple of seconds to a few minutes
+species.ps <- tax_glom(qiime_microbiome.ps, "species") # Depending on your computer and file size, this can take a couple of seconds to a few minutes
 
 # We can get sample counts at the species level.
 sum(sample_sums(species.ps))
 
 # We can calculate the percentage of counts at the species level out of classified at the phylum level.
-sum(sample_sums(species.ps))  /  sum(sample_sums(phylum.ps)) * 100
+sum(sample_sums(species.ps))  /  sum(sample_sums(qiime_phylum.ps)) * 100
 
 # In this data, we had a high percentage of ASVs classified down to the species level. 
 # This can vary widely by dataset and is an important consideration.
@@ -176,23 +92,24 @@ sum(sample_sums(species.ps))  /  sum(sample_sums(phylum.ps)) * 100
 
 # We can observe the counts using a simple bar chart using plot_bar()
 # We have to specify that we'll fill the bar charts using the phylum counts ()
-plot_bar(microbiome.ps)
+plot_bar(qiime_microbiome.ps)
 
-plot_bar(phylum.ps, fill = "phylum")
+
+plot_bar(qiime_phylum.ps, fill = "phylum")
 
 # We can specify a "facet_grid" to organize the plot
-plot_bar(phylum.ps, fill = "phylum", facet_grid = "Group")
+plot_bar(qiime_phylum.ps, fill = "phylum", facet_grid = "Sample_type")
 
 
-# We group counts by the treatement Group
-plot_bar(phylum.ps, fill = "phylum", x = "Group")
+# We group counts by the treatement Sample_type
+plot_bar(qiime_phylum.ps, fill = "phylum", x = "Sample_type")
 
 
 ##### Convert OTU abundances to relative abundances
-phylum.ps.rel <- transform_sample_counts(phylum.ps, function(x) x / sum(x) )
+qiime_phylum.ps.rel <- transform_sample_counts(qiime_phylum.ps, function(x) x / sum(x) )
 
 # We can plot these results, notice the y-axis relative abundance plots
-plot_bar(phylum.ps.rel, fill= "phylum")
+plot_bar(qiime_phylum.ps.rel, fill= "phylum")
 
 
 
@@ -212,52 +129,38 @@ plot_bar(phylum.ps.rel, fill= "phylum")
 # Find more infomation about diversity indices here: http://www.jmb.or.kr/submission/Journal/027/JMB027-12-02_FDOC_2.pdf
 
 # Estimating richness and diversity using the easy-to-use function estimate_richness()
-microbiome_16S_diversity_values <- estimate_richness(microbiome.ps)
+qiime_microbiome_16S_diversity_values
+qiime_microbiome_16S_diversity_values$Name <- row.names(qiime_microbiome_16S_diversity_values)
+
+# Remember, that with phyloseq objects, you have to convert to matrix first, then to dataframe
+qiime_sample_metadata <- as.data.frame(as(sample_data(qiime_microbiome.ps), "matrix"))
+
+# Now, we use left_join() to add the sample_metadata to the combined_diversity_values object
+qiime_microbiome_16S_diversity_values <- left_join(qiime_sample_metadata,qiime_microbiome_16S_diversity_values, by = "Name")
+
+# Need to provide sample_names() to the newly formed metadata object
+sample_names(qiime_microbiome_16S_diversity_values) <- qiime_microbiome_16S_diversity_values$Name
+# Merge updated metadata values back into phyloseq object
+qiime_microbiome.ps <- merge_phyloseq(qiime_microbiome, phy_tree(qiime_microbiome_phylo_tree), tax_table(as.matrix(taxa.df)), sample_data(sample_metadata))
+
 
 # We can do the same for the phylum counts
-estimate_richness(phylum.ps) # Notice the error you get.
+qiime_phylum_diversity <- estimate_richness(qiime_phylum.ps) # Notice the error you get.
+
 # Microbiome papers usually report diversity indices at the ASV level (before aggregation), but also for different taxa levels
 
 # We can easily plot these values using the plot_richness() function, we'll just pick 3 commonly used alpha diversity indices
-plot_richness(phylum.ps, x = "Group", color = "Group", measures = c("Observed", "Shannon", "InvSimpson")) 
+plot_richness(qiime_phylum.ps, x = "Sample_type", color = "Sample_type", measures = c("Observed", "Shannon", "InvSimpson")) 
+
+# Try again for just a few diversity measures
+qiime_phylum_diversity <- estimate_richness(qiime_phylum.ps, measures = c("Observed", "Shannon", "InvSimpson"))
+qiime_phylum_diversity
 
 # We can then modify this figure using ggplot2 functions like geom_boxplot() by using the "+" sign 
 # We'll explore further options in later steps
-plot_richness(phylum.ps, x = "Group", color = "Group", measures = c("Observed", "Shannon", "InvSimpson")) + 
+plot_richness(qiime_phylum.ps,x = "Sample_type", color = "Sample_type", measures = c("Observed", "Shannon", "InvSimpson")) + 
   geom_boxplot()
 
-
-
-
-#
-##
-### Merge diversity values for the microbiome and resistome
-##
-#
-
-
-# We can make a new column, named "SeqType" and give it the value of "16S"
-microbiome_16S_diversity_values <- microbiome_16S_diversity_values %>%
-  mutate(SeqType = "16S", DataType = "16S microbiome", Sample = row.names(microbiome_16S_diversity_values))
-
-# We can make a new column, named "SeqType" and give it the value of "shotgun"
-microbiome_shotgun_diversity_values <- microbiome_shotgun_diversity_values %>%
-  mutate(SeqType = "shotgun", DataType = "shotgun microbiome", Sample = row.names(microbiome_shotgun_diversity_values))
-
-# We can make a new column, named "SeqType" and give it the value of "shotgun"
-amr_shotgun_diversity_values <- amr_shotgun_diversity_values %>%
-  mutate(SeqType = "shotgun", DataType = "resistome", Sample = row.names(amr_shotgun_diversity_values))
-
-
-# Now we can merge these tables based on identical row
-combined_diversity_values <- bind_rows(microbiome_16S_diversity_values, microbiome_shotgun_diversity_values, amr_shotgun_diversity_values)
-
-# To help us better summarize the results, we can add the metadata information 
-# First, we need to add a "Sample" column in the sample_metadata like in the combined_diversity_values object
-sample_metadata$Sample <- row.names(sample_metadata)
-
-# Now, we use left_join() to add the sample_metadata to the combined_diversity_values object
-combined_diversity_values <- left_join(combined_diversity_values, sample_metadata, by = "Sample")
 
 
 
@@ -271,16 +174,21 @@ combined_diversity_values <- left_join(combined_diversity_values, sample_metadat
 # While phyloseq has built-in functions for easy plotting, we might want to export these counts for easier use with ggplot2
 
 ##### Convert phyloseq object with relative abundance to data.frame
-phylum.ps.melt <- psmelt(phylum.ps.rel)
+qiime_phylum.ps.rel.melt <- psmelt(qiime_phylum.ps.rel)
 
-head(phylum.ps.melt)
+head(qiime_phylum.ps.rel.melt)
 
 ##### Plot phyla abundances
-plot.phylum.rel.bar <- ggplot(phylum.ps.melt, aes(x = Sample, y = Abundance, fill = phylum)) +
+plot.phylum.rel.bar <- ggplot(qiime_phylum.ps.rel.melt, aes(x = Sample, y = Abundance, fill = phylum)) +
   geom_bar(stat = "identity") +
-  facet_wrap(~Group, scales = "free") +
+  facet_wrap(~Sample_type, scales = "free") +
   theme_bw()
 
 plot.phylum.rel.bar
 
 
+#
+##
+### Use this area below to try the methods you just learned, but using another 
+##
+#

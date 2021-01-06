@@ -1,0 +1,17 @@
+ID,Name,Label on Sample,SequencingID,Collectors,Sequencing Library,SampleID,Sample_type,Raw_paired_reads,Sequencing_type,Mean_phred_score
+BFe2,BFe2,beef fecal--2A--6/15,BFe2_L001,MW  ED,BFe2_L001,A,Beef,34440,16S-microbiome,36.38
+AFe25,AFe25,House B Poultry Feces 5B,AFe25_L004,MW  CY,AFe25_L004,B,Poultry,40183,16S-microbiome,36.21
+AFe20,AFe20,House E Poultry Feces 20A,AFe20_L003,ED  PR,AFe20_L003,C,Poultry,34352,16S-microbiome,36.29
+AFe9,AFe9,House C Poultry Feces 9A,AFe9_L002,ED  PR,AFe9_L002,D,Poultry,36728,16S-microbiome,35.94
+AFe1,AFe1,House A Poultry Feces 1A,AFe1_L001,MW  CY,AFe1_L001,E,Poultry,33204,16S-microbiome,36.48
+HBHw1,HBHw1,Human Waste Beef 7/15,HBHw1_L001,MW  ER,HBHw1_L001,F,WWTP,30770,16S-microbiome,36.14
+HBHw2,HBHw2,Human Waste Beef 7/15,HBHw2_L002,MW  ER,HBHw2_L002,G,WWTP,34176,16S-microbiome,36.27
+HBHw3,HBHw3,Human Waste Beef 7/15,HBHw3_L003,MW  ER,HBHw3_L003,H,WWTP,28177,16S-microbiome,36.1
+HBHw4,HBHw4,Human Waste Beef 7/15,HBHw4_L004,MW  ER,HBHw4_L004,I,WWTP,30079,16S-microbiome,36.31
+BFe39,BFe39,beef fecal--19B--6/15,BFe39_L004,MW  ED,BFe39_L004,J,Beef,25624,16S-microbiome,36.14
+BFe11,BFe11,beef fecal-11A--6/15,BFe11_L002,MW  ED,BFe11_L002,K,Beef,34689,16S-microbiome,36.5
+BFe13,BFe13,beef fecal--13A--6/15,BFe13_L003,MW  ED,BFe13_L003,L,Beef,34285,16S-microbiome,36.48
+PFe16,PFe16,P F --A16--7/15,PFe16_L002,MW  ED  PR,PFe16_L002,M,Swine,33462,16S-microbiome,36.29
+PFe37,PFe37,P F --B17--7/15,PFe37_L004,MW  ED  PR,PFe37_L004,N,Swine,34809,16S-microbiome,36.6
+PFe13,PFe13,P F --A13--7/15,PFe13_L001,MW  ED  PR,PFe13_L001,O,Swine,28976,16S-microbiome,36.41
+PFe22,PFe22,P F --B2--7/15,PFe22_L003,MW  ED  PR,PFe22_L003,O,Swine,31179,16S-microbiome,36.59

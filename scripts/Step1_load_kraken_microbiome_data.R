@@ -4,6 +4,10 @@
 ##
 #
 
+# Sample metadata
+sample_metadata <- read.table('./data/megarich_sample_metadata.csv', header=T, sep=',', row.names = 1, quote = "")
+sample_metadata # Run the object name to get more information about the file we just loaded
+
 # Load the kraken count table                                        
 kraken_microbiome <- read.table('./data/shotgun_kraken_analytic_matrix.csv', header=T, row.names=1, sep=',')
 
@@ -31,7 +35,4 @@ kraken_taxonomy <- within(kraken_taxonomy, rm(kingdom))
 
 # Create kraken phyloseq object
 kraken_microbiome.ps <- merge_phyloseq(kraken_microbiome, tax_table(as.matrix(kraken_taxonomy)),sample_data(sample_metadata))
-
-# Estimating richness and diversity using the easy-to-use function estimate_richness()
-microbiome_shotgun_diversity_values <- estimate_richness(kraken_microbiome.ps)
 
