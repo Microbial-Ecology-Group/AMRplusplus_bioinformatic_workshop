@@ -1,18 +1,19 @@
-# Load the data
-# This script also loads any necessary libraries
-source("./scripts/load_data.R")
-
+# Load required libraries
+source('scripts/load_R_packages.R')
+# Load kraken
+source("scripts/Step1_load_kraken_microbiome_data.R") 
+kraken_microbiome.ps # This phyloseq object contains the microbiome results, taxa table, and metadata
 
 #####################
 ##### Filter Data ####
 ######################
 
 # First let's process normalize our counts with CSS normalization and aggregate counts at the phylum level
-filtered_microbiome.ps = filter_taxa(microbiome.ps, function(x) sum(x) > 5, TRUE)
-filtered_microbiome.metaseq <- phyloseq_to_metagenomeSeq(filtered_microbiome.ps)
+filtered_kraken_microbiome.ps = filter_taxa(kraken_microbiome.ps, function(x) sum(x) > 5, TRUE)
+filtered_microbiome.metaseq <- phyloseq_to_metagenomeSeq(filtered_kraken_microbiome.ps)
 cumNorm(filtered_microbiome.metaseq)
 CSS_microbiome_counts <- MRcounts(filtered_microbiome.metaseq, norm = TRUE)
-CSS_normalized_qiime.ps <- merge_phyloseq(otu_table(CSS_microbiome_counts, taxa_are_rows = TRUE),sample_data(microbiome.ps),tax_table(microbiome.ps), phy_tree(microbiome.ps))
+CSS_normalized_qiime.ps <- merge_phyloseq(otu_table(CSS_microbiome_counts, taxa_are_rows = TRUE),sample_data(kraken_microbiome.ps),tax_table(kraken_microbiome.ps))
 CSS_normalized_phylum_qiime.ps <- tax_glom(CSS_normalized_qiime.ps, "phylum")
 
 
@@ -30,10 +31,10 @@ plot_heatmap(CSS_normalized_phylum_qiime.ps, taxa.label = "phylum")
 
 # We can group our samples using metadata variabes.
 # In the example below we change the order of samples and their labels.
-plot_heatmap(CSS_normalized_phylum_qiime.ps,sample.order = "Group" ,sample.label="Group", taxa.label = "phylum")
+plot_heatmap(CSS_normalized_phylum_qiime.ps,sample.order = "Sample_type" ,sample.label="Sample_type", taxa.label = "phylum")
 
 # Or, we can make the same heatmap, but we can cluster samples using NMDS and the Bray-curtis distance
-plot_heatmap(CSS_normalized_phylum_qiime.ps,method = "NMDS", distance = "bray", sample.label="Group",taxa.label = "phylum")
+plot_heatmap(CSS_normalized_phylum_qiime.ps,method = "NMDS", distance = "bray", sample.label="Sample_type",taxa.label = "phylum")
 
 #
 ## Next here is an example of another library we can use for heatmap plots
@@ -83,38 +84,48 @@ pheatmap( log(otu_table(CSS_normalized_phylum_qiime.ps) + 1), cluster_cols = sor
 phylum_microbiome.metaseq <- aggTax(filtered_microbiome.metaseq, lvl = "phylum")
 
 # metagenomeSeq also has functions for filtering data
-filtered_phylum_microbiome.metaseq <- filterData(phylum_microbiome.metaseq, present = 4)
+filtered_phylum_microbiome.metaseq <- filterData(phylum_microbiome.metaseq, present = 3)
 
 # Make the "zero" model with library size of the raw data
-zero_mod <- model.matrix(~0+log(libSize(filtered_microbiome.metaseq)))
-# Make model with "Group" variable
-Group <- pData(phylum_microbiome.metaseq)$Group
-design_group = model.matrix(~0 + Group)
+zero_mod <- model.matrix(~0+log(libSize(microbiome.metaseq)))
+# Make model with "Sample_type" variable
+Sample_type <- pData(phylum_microbiome.metaseq)$Sample_type
+design_group = model.matrix(~0 + Sample_type)
 
-# This next command creates the normalization factor. We need the norm factors for 
-# the fitZig function, but notice that we use the flag, useCSSoffset = FALSE so that it does not use
-# the normalization factor is not used and instead, we feed it the "zeroMod" which is
-# based on the raw counts.
-cumNorm(filtered_phylum_microbiome.metaseq)
+# We still need to use cumNorm even thought we aren't using the normalization factor because of the "useCSSoffset = FALSE)                                     
+filtered_phylum_microbiome.metaseq <- cumNorm(filtered_phylum_microbiome.metaseq)
 
+# Create ZIG model                                     
 zig_model <- fitZig(obj= filtered_phylum_microbiome.metaseq, mod = design_group, zeroMod=zero_mod, useCSSoffset = FALSE)
 
 # Use Ebayes to adjust model fit
-ebayes_zig_model <- eBayes(zig_model$fit)
+ebayes_zig_model <- eBayes(zig_model@fit)
+ebayes_zig_model
 
-zigFit_Group = zig_model$fit
-finalMod_Group = zig_model$fit$design
-contrast_Group = makeContrasts(GroupControl-GroupTreatment, levels=finalMod_Group)
+zigFit_Group = zig_model@fit
+finalMod_Group = ebayes_zig_model$design
+
+contrast_Group = makeContrasts(Sample_typeBeef - Sample_typePoultry,Sample_typeBeef - Sample_typeSwine,
+                               Sample_typeBeef - Sample_typeWWTP, Sample_typePoultry - Sample_typeSwine,
+                               Sample_typePoultry - Sample_typeWWTP, Sample_typeSwine - Sample_typeWWTP,
+                               levels=finalMod_Group)
+
+
 zigFit_contrasts = contrasts.fit(zigFit_Group, contrast_Group)
 EB_zigFit_contrasts = eBayes(zigFit_contrasts)
 
-# Make table of results, you can output these results with "write.csv()"
+# make table of results, you can output these results with "write.csv()"
 # Explore this table for the results.
-table_EB_zigFit_contrasts <- topTable(EB_zigFit_contrasts, coef=1, adjust.method="BH",number = 1000)
+full_table_EB_zigFit_contrasts <- topTable(EB_zigFit_contrasts, adjust.method="BH",number = 1000)
+# This table has all of the results from the contrasts made above. 
+full_table_EB_zigFit_contrasts
+
+# To pick only a comparison between certain coefficient pairs, use the "coef" flag and specify the pair you want to use based on it's position in the table (1,2,3, etc)
+table_EB_zigFit_contrasts <- topTable(EB_zigFit_contrasts, adjust.method="BH",number = 1000, coef = 1)
+table_EB_zigFit_contrasts
 
 
-## We went over how to create basic volcano plots in Lesson 3 Step 3, here we'll go over
-# a few more examples.
+## We went over how to create basic volcano plots in Step 3, here we'll go over a few more examples.
 
 
 ## Obtain logical vector regarding whether padj values are less than 0.05
@@ -146,7 +157,7 @@ ggplot(table_EB_zigFit_contrasts) +
 
 # As you have come to find out, we'll be needing yet another R package.
 # In this case, we'll use ggrepel which helps with labeling points in ggplot2 figures.
-install.packages(ggrepel)
+install.packages("grepel")
 library(ggrepel)
 
 ## Sort by ordered adj.P.Val
@@ -173,29 +184,4 @@ ggplot(ordered_table_EB_zigFit_contrasts) +
   theme(legend.position = "none",
         plot.title = element_text(size = rel(1.5), hjust = 0.5),
         axis.title = element_text(size = rel(1.25))) 
-
-
-################################
-#                              #
-# "Publication-ready figures   #
-#                              #
-################################
-
-# You don't have to install the next package, but below is an example of how we can group
-# multiple plots in a page. The "ggpubr" package has a lot of great functions for making
-# publication-ready figures in combination with ggplot2.
-devtools::install_github("kassambara/ggpubr")
-
-# Below, we can use the "ggarrange()" to group our 4 plots saved from above.
-# Notice, we can use "common.legend" to specify that we only need one legend.
-# We also can add a label for each plot.
-combined_figures <- ggarrange(plot_filtered_raw_qiime_phylum  + rremove("x.text"),plot_tss_qiime_phylum  + rremove("x.text"),
-                              plot_rarefied_qiime_phylum,plot_css_qiime_phylum, common.legend = TRUE,
-                              legend = "right", labels = c("A)", "B)", "C)","D)"))
-combined_figures
-
-# Additionally, you can further annotate your figures using the "annotate_figure" function
-annotate_figure(combined_figures,
-                bottom = text_grob("Data source: 16S rRNA sequencing of beef feedlot cattle feces", color = "blue",
-                                   hjust = 1, x = 1, face = "italic", size = 8))
 

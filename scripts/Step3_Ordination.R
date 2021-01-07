@@ -1,6 +1,7 @@
-# Load the data
-# This script also loads any necessary libraries
-source("./scripts/load_data.R")
+# Load required libraries
+source('scripts/load_R_packages.R')
+# Load kraken
+source("scripts/Step1_load_kraken_microbiome_data.R") 
 
 # In this script, we'll go over how to use ordination to compare the microbiome/resistome composition
 # in our data.
@@ -12,7 +13,7 @@ source("./scripts/load_data.R")
 # Filtering low abundance phyla prior to normalization.
 # For this example, we'll just choose an arbitrary value of 5 as the threshold for
 # for filtering out ASVs with low abundance.
-filtered_microbiome.ps = filter_taxa(microbiome.ps, function(x) sum(x) > 5, TRUE)
+filtered_microbiome.ps = filter_taxa(qiime_microbiome.ps, function(x) sum(x) > 5, TRUE)
 
 # We'll use CSS normalized values, so we need to convert to a metagenomeSeq object
 filtered_microbiome.metaseq <- phyloseq_to_metagenomeSeq(filtered_microbiome.ps)
@@ -24,14 +25,14 @@ microbiome.metaseq <- cumNorm(filtered_microbiome.metaseq)
 # Here, we need to use MRcounts() and re-make the phyloseq object with the normalized counts
 CSS_microbiome_counts <- MRcounts(microbiome.metaseq, norm = TRUE)
 # Use the new counts and merge with components from our original phyloseq object.
-CSS_normalized_qiime.ps <- merge_phyloseq(otu_table(CSS_microbiome_counts, taxa_are_rows = TRUE),sample_data(microbiome.ps),tax_table(microbiome.ps), phy_tree(microbiome.ps))
+CSS_normalized_qiime.ps <- merge_phyloseq(otu_table(CSS_microbiome_counts, taxa_are_rows = TRUE),sample_data(qiime_microbiome.ps),tax_table(qiime_microbiome.ps), phy_tree(qiime_microbiome.ps))
 
 # Aggregate counts to phylum
 CSS_normalized_phylum_qiime.ps <- tax_glom(CSS_normalized_qiime.ps, "phylum")
 
 # Notice the y-axis values are counts and not proportions.
 plot_css_qiime_phylum <- plot_bar(CSS_normalized_phylum_qiime.ps, fill = "phylum") + 
-  facet_wrap(~ Group, scales = "free_x") +
+  facet_wrap(~ Sample_type, scales = "free_x") +
   labs(title= "CSS normalized qiime microbiome counts") +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_text(size = 6, angle = 45),
@@ -54,17 +55,17 @@ ordination_phylum_bray <- ordinate(CSS_normalized_phylum_qiime.ps, method = "NMD
 
 # We can use "plot_ordination()" to plot the distance matrix
 # We specify that we want to compare "samples" and color the points by the "Group" metadata variable
-plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "samples",color = "Group")
+plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "samples",color = "Sample_type")
 
 # You can also view the ordination, this time comparing the taxa
 plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "taxa",color = "phylum")
 
 # Another option is to use the "split" type to create 2 split figures
-split_ord_plot <- plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "split",color = "phylum", shape = "Group")
+split_ord_plot <- plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "split",color = "phylum", shape = "Sample_type")
 split_ord_plot
 
 # We can visualize both comparisons at the same time using "biplot" 
-biplot_ord_plot <- plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "biplot",color = "phylum", shape = "Group")
+biplot_ord_plot <- plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "biplot",color = "phylum", shape = "Sample_type")
 biplot_ord_plot
 
 #
@@ -73,20 +74,15 @@ biplot_ord_plot
 
 # Remember, we can make plots with phyloseq functions and then modify them with 
 # ggplot2 layers.
-phylum_ord_plot1 <- plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "samples",color = "Group", shape = "Group")
+phylum_ord_plot1 <- plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "samples",color = "Sample_type", shape = "Sample_type")
 phylum_ord_plot1
 
 # For example, you can add a polygon around sample groups, but doesn't work as well 
 # when the sample groups don't cluster
-phylum_ord_plot1 +  geom_polygon(aes(fill=Group)) + 
+phylum_ord_plot1 +  geom_polygon(aes(fill=Sample_type)) + 
   geom_point(size=5) +
   ggtitle("Microbiome ordination at the phylum level by sample group")
 
-# Here, we convert our metadata variable "Sample_block" from numeric to factor
-sample_data(CSS_normalized_phylum_qiime.ps)$Sample_block <- as.factor(sample_data(CSS_normalized_phylum_qiime.ps)$Sample_block)
-# Plot ordination and change point shape based on treatment "Group"
-phylum_ord_plot2 <- plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "samples",color ="Sample_block", shape = "Group")
-phylum_ord_plot2
 
 ################################
 #                              #
@@ -112,7 +108,7 @@ ord_meths = c("DCA", "CCA", "RDA", "DPCoA", "NMDS", "MDS", "PCoA")
 # and then add it all in a list called "plist"
 plist = llply(as.list(ord_meths), function(i, physeq, dist){
   ordi = ordinate(physeq, method=i, distance=dist)
-  plot_ordination(physeq, ordi, "samples", color="Group")
+  plot_ordination(physeq, ordi, "samples", color="Sample_type")
 }, CSS_normalized_phylum_qiime.ps, dist)
 names(plist) <- ord_meths # name the objects in the list
 
@@ -126,7 +122,7 @@ pdataframe = ldply(plist, function(x){
 names(pdataframe)[1] = "method"
 
 # Visualize the results
-p = ggplot(pdataframe, aes(Axis_1, Axis_2, color=Group, shape=Group, fill=Group))
+p = ggplot(pdataframe, aes(Axis_1, Axis_2, color=Sample_type, shape=Sample_type, fill=Sample_type))
 p = p + geom_point(size=4) + geom_polygon()
 p = p + facet_wrap(~method, scales="free")
 p = p + scale_fill_brewer(type="qual", palette="Set1")
@@ -169,7 +165,7 @@ pdataframe = ldply(plist, function(x){
 names(pdataframe)[1] = "distance_measure"
 
 # Visualize the results
-p2 = ggplot(pdataframe, aes(Axis_1, Axis_2, color=Group, shape=Group, fill=Group))
+p2 = ggplot(pdataframe, aes(Axis_1, Axis_2, color=Sample_type, shape=Sample_type, fill=Sample_type))
 p2 = p2 + geom_point(size=4) + geom_polygon()
 p2 = p2 + facet_wrap(~distance_measure, scales="free")
 p2 = p2 + scale_fill_brewer(type="qual", palette="Set1")
@@ -193,7 +189,7 @@ p2
 
 # First, make the R object with the sample grouping variable.
 # ANOSIM only allows for the comparison of samples from 2 different groups.
-group_variable = get_variable(CSS_normalized_phylum_qiime.ps,"Group")
+group_variable = get_variable(CSS_normalized_phylum_qiime.ps,"Sample_type")
 
 # Phyloseq uses functions like "ordinate()" and "plot_ordination()" to wrap a bunch of 
 # functions from other packages too. For the last few steps in this script, you'll see
@@ -234,13 +230,13 @@ ASV_counts
  
 # Create the perMANOVA model
 # NB. We have to tranpose the counts so that ASV features are columns
-adonis_phylum_by_Group_Sample_block = adonis(t(ASV_counts) ~ Group + as.factor(Sample_block), data = df, method = "bray")
+adonis_phylum_by_Sample_type = adonis(t(ASV_counts) ~ Sample_type, data = df, method = "bray")
 
 # View results
-adonis_phylum_by_Group_Sample_block
+adonis_phylum_by_Sample_type
 
 # View model plots
-plot(adonis_phylum_by_Group_Sample_block$aov.tab)
+plot(adonis_phylum_by_Sample_type$aov.tab)
 
 # Check assumption of similar multivariate spread among the treatment groups.
 # PERMANOVA works with the assumption that dispersion of the data in your 
@@ -257,12 +253,12 @@ phylum_bray_dist <- distance(CSS_normalized_phylum_qiime.ps, "bray")
 # We are most interested in differences between treatment "Group".
 # The result from this test is non-significant and suggests we can continue
 # with our perMANOVA analysis.
-permutest(betadisper(phylum_bray_dist, df$Group), pairwise = TRUE)
+permutest(betadisper(phylum_bray_dist, df$Sample_type), pairwise = TRUE)
 
 
 # We can pull out the model coefficients and plot wich taxa contribute most
 # to the community differences.
-coef <- coefficients(adonis_phylum_by_Group_Sample_block)["Group1",]
+coef <- coefficients(adonis_phylum_by_Group_Sample_block)["Sample_type1",]
 top.coef <- coef[rev(order(abs(coef)))[1:20]]
 par(mar = c(3, 14, 2, 1))
 barplot(sort(top.coef), horiz = T, las = 1, main = "Top taxa")
@@ -275,11 +271,13 @@ barplot(sort(top.coef), horiz = T, las = 1, main = "Top taxa")
 #
 
 # We are less familiar with adonis2, but it adds functions you might find useful
-adonis2_phylum_by_Group_Sample_block = adonis2(t(ASV_counts) ~ Group + as.factor(Sample_block), data = df, method = "bray")
+adonis2_phylum_by_Group_Sample_block = adonis2(t(ASV_counts) ~ Sample_type, data = df, method = "bray")
 adonis2_phylum_by_Group_Sample_block
 
-marginal_adonis2_phylum_by_Group_Sample_block = adonis2(t(ASV_counts) ~ Group + as.factor(Sample_block), data = df, method = "bray", by = NULL)
+marginal_adonis2_phylum_by_Group_Sample_block = adonis2(t(ASV_counts) ~ Sample_type , data = df, method = "bray", by = NULL)
+marginal_adonis2_phylum_by_Group_Sample_block
 
+# This is optional! (and often fails some R version)
 # With adonis2, we can perform pairwise contrasts but we'll need an additional
 # library from github. Try the following commands to see if you can get 
 # everything installed.
@@ -290,6 +288,6 @@ library(pairwiseAdonis)
 
 # With pairwise.adonis2() , we can specify the "strata" factor which controls for
 # nested (e.g. block) designs
-posthoc_group_comparison <-pairwise.adonis2(phylum_bray_dist ~ Group ,data=df, strata="Sample_block")
+posthoc_group_comparison <-pairwise.adonis2(phylum_bray_dist ~ Sample_type ,data=df)
 # View pairwise comparison
 posthoc_group_comparison$Treatment_vs_Control

@@ -160,7 +160,7 @@ qiime_microbiome_16S_diversity_values
 qiime_microbiome_16S_diversity_values$Name <- row.names(qiime_microbiome_16S_diversity_values)
 
 # Now, we use left_join() to add the sample_metadata to the object with diversity values
-expanded_metadata <- left_join(sample_metadata,qiime_microbiome_16S_diversity_values, by = "Name")
+expanded_metadata <- left_join(qiime_sample_metadata,qiime_microbiome_16S_diversity_values, by = "Name")
 
 # Need to provide row.names to the newly formed metadata object
 row.names(expanded_metadata) <- expanded_metadata$Name
@@ -199,6 +199,7 @@ ggplot(sample_data(qiime_microbiome.ps), aes(x = Sample_type , y = as.numeric(Ra
         axis.text.y = element_text(size = 18),
         plot.title = element_text(hjust = 0.5),
         panel.background = element_blank())
+
 #
 ## Diversity indices boxplots
 #
@@ -225,6 +226,27 @@ plot_raw_qiime_phylum <- plot_bar(qiime_phylum.ps, fill = "phylum") +
 plot_raw_qiime_phylum
 
 
+# Example of rarefaction
+# Set seed for reproducibility
+set.seed(42)
+# Rarefy to sample with lowest number of reads
+rarefied_qiime.ps <- rarefy_even_depth(qiime_microbiome.ps, sample.size = min(sample_sums(qiime_microbiome.ps)))
+# Aggregate counts to phylum
+rarefied_phylum_qiime.ps <- tax_glom(rarefied_qiime.ps, "phylum")
+# Bar plot to visualize results
+plot_rarefied_qiime_phylum <- plot_bar(rarefied_phylum_qiime.ps, fill = "phylum") + 
+  facet_wrap(~ Sample_type, scales = "free_x") +
+  labs(title= "Rarefied qiime microbiome counts") +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_text(size = 6, angle = 45),
+        panel.background = element_blank(),
+        legend.title = element_text( size=8), 
+        legend.text=element_text(size=8))
+plot_rarefied_qiime_phylum
+
+
+#
+## Normalization using Cumulative sum scaling
 # First, we convert the phyloseq object to metagenomeSeq
 # load the metagenomeSeq library
 library(metagenomeSeq)
@@ -262,6 +284,9 @@ plot_css_qiime_phylum
 # You first need to run the object containg the plot, and then the "ggsave()" function right after that.
 plot_raw_qiime_phylum
 ggsave("raw_qiime_phylum_counts_by_sample.pdf",width = 30, height = 20, units = "cm")
+# Repeat the process for another figure
+plot_rarefied_qiime_phylum
+ggsave("CSSnormalized_qiime_phylum_counts_by_sample.pdf",width = 30, height = 20, units = "cm")
 # Repeat the process for another figure
 plot_css_qiime_phylum
 ggsave("CSSnormalized_qiime_phylum_counts_by_sample.pdf",width = 30, height = 20, units = "cm")
