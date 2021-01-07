@@ -125,7 +125,9 @@ MEG resources
 * [FT Visual Journalism Team](https://www.ft.com/visual-and-data-journalism)
   * Awesome site with articles covering various topics and with the emphasis on creating awesome graphics to convey
 * [Interactive Jupyter notebooks](https://voila-gallery.org/)
-  * Also use [this site for neat jupyter tips and tricks](https://www.dataquest.io/blog/jupyter-notebook-tips-tricks-shortcuts/)
+  * Also use [this site for neat jupyter tips and tricks](https://www.dataquest.io/blog/jupyter-notebook-tips-tricks-shortcuts/)'
+* [GGplot colors and themes](http://www.sthda.com/english/wiki/ggplot2-colors-how-to-change-colors-automatically-and-manually)
+* [More ggplot colors and themes](https://www.datanovia.com/en/blog/ggplot-colors-best-tricks-you-will-love/)
 
 ### Command-line
 * [Explain shell](https://explainshell.com/)
