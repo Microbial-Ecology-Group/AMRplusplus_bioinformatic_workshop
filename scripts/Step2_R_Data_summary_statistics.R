@@ -20,12 +20,15 @@ sample_names(qiime_microbiome.ps)
 rank_names(qiime_microbiome.ps)
 # Variables in the metadata
 sample_variables(qiime_microbiome.ps)
+
 # Easy sums of counts by sample
 sample_sums(qiime_microbiome.ps)
 
+
 # How can we get the total counts by adding across all samples?
-
-
+sum(sample_sums(qiime_microbiome.ps))
+mean(sample_sums(qiime_microbiome.ps))
+min(sample_sums(qiime_microbiome.ps))
 
 
 
@@ -75,6 +78,12 @@ sum(sample_sums(species.ps))
 
 # We can calculate the percentage of counts at the species level out of classified at the phylum level.
 sum(sample_sums(species.ps))  /  sum(sample_sums(qiime_phylum.ps)) * 100
+
+# Proportion of reads mapped to the species level, out of all microbiome mapped reads
+sum(sample_sums(species.ps))  /  sum(sample_sums(qiime_microbiome.ps)) * 100
+
+# Proportion of reads mapped to the species level, out of all raw_paired_reads
+sum(sample_sums(species.ps))  / sum(sample_data(qiime_phylum.ps)$Raw_paired_reads) * 100
 
 # In this data, we had a high percentage of ASVs classified down to the species level. 
 # This can vary widely by dataset and is an important consideration.

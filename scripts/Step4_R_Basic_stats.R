@@ -1,22 +1,6 @@
 ######## Basic statistics ######
 ##### Set up environment
 # Please excuse us if you keep finding new packages here for you to install.
-# We'll try to minimize the use of additional packages
-library("phyloseq")
-library("dplyr")
-library("ggplot2")
-library("data.table")
-library("tidyr")
-library("forcats")
-library("vegan")
-library("ggpubr") # we'll use the function "ggqqplot()" for this step
-
-# Let's erase any objects that might still be in your environment
-rm(list=ls()) 
-
-# Load the data
-source("./scripts/load_data.R")
-
 
 #
 ##

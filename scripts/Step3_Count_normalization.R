@@ -217,20 +217,20 @@ plot_tss_qiime_phylum
 
 # First, we convert the phyloseq object to metagenomeSeq
 library(metagenomeSeq)
-microbiome.metaseq <- phyloseq_to_metagenomeSeq(qii) #filtered_microbiome.ps
+qiime_microbiome.metaseq <- phyloseq_to_metagenomeSeq(qiime_microbiome.ps) 
 
 # Check out this object:
-microbiome.metaseq
+qiime_microbiome.metaseq
 
 # This is where we perform the normalization
-microbiome.metaseq <- cumNorm(microbiome.metaseq)
+qiime_microbiome.metaseq <- cumNorm(qiime_microbiome.metaseq)
 
 # Like phyloseq, metagenomeSeq has it's own functions for accessing their data.
 # Here, we need to use MRcounts() and re-make the phyloseq object with the normalized counts
-CSS_microbiome_counts <- MRcounts(microbiome.metaseq, norm = TRUE)
+CSS_microbiome_counts <- MRcounts(qiime_microbiome.metaseq, norm = TRUE)
 
 # Use the new counts and merge with components from our original phyloseq object.
-CSS_normalized_qiime.ps <- merge_phyloseq(otu_table(CSS_microbiome_counts, taxa_are_rows = TRUE),sample_data(filtered_microbiome.ps),tax_table(filtered_microbiome.ps), phy_tree(filtered_microbiome.ps))
+CSS_normalized_qiime.ps <- merge_phyloseq(otu_table(CSS_qiime_microbiome_counts, taxa_are_rows = TRUE),sample_data(filtered_microbiome.ps),tax_table(filtered_microbiome.ps), phy_tree(filtered_microbiome.ps))
 
 # Aggregate counts to phylum
 CSS_normalized_phylum_qiime.ps <- tax_glom(CSS_normalized_qiime.ps, "phylum")
@@ -264,28 +264,4 @@ plot_bar(median_normalized_phylum_qiime.ps, fill = "phylum") +
   theme_classic()
 
 
-
-################################
-#                              #
-#   Visualizing the results    #
-#                              #
-################################
-
-# You don't have to install the next package, but below is an example of how we can group
-# multiple plots in a page. The "ggpubr" package has a lot of great functions for making
-# publication-ready figures in combination with ggplot2.
-library(ggpubr) # use "install.packages()" first if you don't have this package
-
-# Below, we can use the "ggarrange()" to group our 4 plots saved from above.
-# Notice, we can use "common.legend" to specify that we only need one legend.
-# We also can add a label for each plot.
-combined_figures <- ggarrange(plot_filtered_raw_qiime_phylum  + rremove("x.text"),plot_tss_qiime_phylum  + rremove("x.text"),
-          plot_rarefied_qiime_phylum,plot_css_qiime_phylum, common.legend = TRUE,
-           legend = "right", labels = c("A)", "B)", "C)","D)"))
-combined_figures
-
-# Additionally, you can further annotate your figures using the "annotate_figure" function
-annotate_figure(combined_figures,
-                bottom = text_grob("Data source: 16S rRNA sequencing of beef feedlot cattle feces", color = "blue",
-                                   hjust = 1, x = 1, face = "italic", size = 8))
 

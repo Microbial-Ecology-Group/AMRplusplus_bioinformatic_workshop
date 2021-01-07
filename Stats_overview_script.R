@@ -1,6 +1,6 @@
 # Welcome to the "staging" script for statistical analysis of bioinformatic results
 # Run this script to install all required R packages, or comment it out if not needed
-source('scripts/install_course_packages.R')
+#source('scripts/install_course_packages.R')
 
 # Once the packages are installed, run the command below to load all the packages
 source('scripts/load_R_packages.R')
@@ -42,6 +42,7 @@ amr <- read.table('./data/shotgun_AMR_analytic_matrix.csv', header=T, row.names=
 # Notice samples are on the columns and taxa are the rows
 colnames(amr)
 rownames(amr)
+View(amr)
 
 # The command below runs all of the R code in the script, "scripts/Step1_load_megares_resistome_data.R"
 source("scripts/Step1_load_megares_resistome_data.R")
@@ -60,7 +61,7 @@ source("scripts/Step1_load_qiime2_microbiome_data.R")
 qiime_microbiome.ps # This phyloseq object contains the microbiome results, taxa table, and metadata
 
 
-# We now have these 3 phyloseq objects to use for further analysis:
+# We now have these 4 phyloseq objects to use for further analysis:
 # kraken_microbiome.ps
 # amr.ps
 # TE_amr.ps
@@ -96,19 +97,26 @@ sample_data(qiime_microbiome.ps)$Raw_paired_reads
 # We can make simple calculations using built-in R functions like "sum(), mean(), etc"
 # This is the total sum of raw paired reads across our dataset
 sum(sample_data(qiime_microbiome.ps)$Raw_paired_reads)
+mean(sample_data(qiime_microbiome.ps)$Raw_paired_reads)
+min(sample_data(qiime_microbiome.ps)$Raw_paired_reads)
+max(sample_data(qiime_microbiome.ps)$Raw_paired_reads)
 
+# Remember that we used two different metadata files, one for the 16S dataset analyzed with qiime2 and another
+# for the 64 metagenomic sequencing samples from the MEGARich dataset (kraken microbiome, resistome, 
+# target enriched resistome)
+sample_data(kraken_microbiome.ps)
 
 # We have many other metadata variables to use for further analysis such as the # of reads after QC filtering
 # total non-host reads, and the number of mapped reads, to name a few. If you write up your data for 
 # submission to a peer-reviewed journal, you'll often describe these results in the text and provide a
 # table of the raw values.
 
-
 #
 ## Alpha diversity measures
 #
+# We can calculate a bunch of diversity measures with a single command, estimate_richness()
 qiime_microbiome_16S_diversity_values <- estimate_richness(qiime_microbiome.ps)
-qiime_microbiome_16S_diversity_values
+min(qiime_microbiome_16S_diversity_values$Observed)
 
 #
 ## Agglomerate ASV counts to different taxonomic levels
@@ -120,6 +128,12 @@ qiime_microbiome_16S_diversity_values
 # Using tax_glom(), we can easily aggregate counts to different levels (taxonomic or AMR annotation levels)
 qiime_phylum.ps <- tax_glom(qiime_microbiome.ps, "phylum")
 qiime_phylum.ps
+
+# The "Fisher" diversity index will cause an error due the phylum aggregated data not having any "singletons"
+phylum_diversity <- estimate_richness(qiime_phylum.ps)
+
+# You can try again, but this time only ask for some of the diversity indices
+phylum_diversity <- estimate_richness(qiime_phylum.ps, measures = c("Observed", "Shannon", "InvSimpson"))
 
 #
 ## To get more ideas and explore further ways to summarize your data, 
@@ -139,21 +153,47 @@ qiime_phylum.ps
 # In this section, we'll go over how to normalize the microbiome results and create some exploratory
 # figures to further explore your data. First, we'll start with some figures to visualize summary statistics.
 
+# We'll pick up were we left off with the diversity indices
+qiime_microbiome_16S_diversity_values
+# We need to add a column with the sample names to help us merge this data to the metadata file and
+# add it back to the phyloseq object
+qiime_microbiome_16S_diversity_values$Name <- row.names(qiime_microbiome_16S_diversity_values)
+
+# Now, we use left_join() to add the sample_metadata to the object with diversity values
+expanded_metadata <- left_join(sample_metadata,qiime_microbiome_16S_diversity_values, by = "Name")
+
+# Need to provide row.names to the newly formed metadata object
+row.names(expanded_metadata) <- expanded_metadata$Name
+
+# Merge updated metadata values back into phyloseq object
+qiime_microbiome.ps <- merge_phyloseq(qiime_microbiome, phy_tree(qiime_microbiome_phylo_tree), tax_table(as.matrix(taxa.df)), sample_data(expanded_metadata))
+
+# Notice the metadata file has been updated in the phyloseq object
+sample_data(qiime_microbiome.ps)
+
 # Using base graphics
 # (Y ~ X)
+# Create boxplot of raw paired reads grouped by Sample_type
+boxplot(sample_data(qiime_microbiome.ps)$Raw_paired_reads ~ sample_data(qiime_microbiome.ps)$Sample_type)
+
+# Now, plot the phred quality scores
 boxplot(sample_data(qiime_microbiome.ps)$Mean_phred_score ~ sample_data(qiime_microbiome.ps)$Sample_type)
 
+# Observed diversity (Richness)
+boxplot(sample_data(qiime_microbiome.ps)$Observed ~ sample_data(qiime_microbiome.ps)$Sample_type)
 
 #
 ## Use ggplot to create boxplot of raw paired reads by Sample_type
 #
-ggplot(sample_data(qiime_microbiome.ps), aes(x = Sample_type , y = Raw_paired_reads, color = Sample_type)) + 
-  geom_boxplot()
-
-# Like ggplot object, you can keep adding "layers" to modify the script
+# Notice that we have to specify that the Y value is numeric with "as.numeric()"
 ggplot(sample_data(qiime_microbiome.ps), aes(x = Sample_type , y = Raw_paired_reads, color = Sample_type)) + 
   geom_boxplot() +
-  geom_jitter(width = 0.1) +
+  geom_point()
+
+# Like ggplot object, you can keep adding "layers" to modify the script
+ggplot(sample_data(qiime_microbiome.ps), aes(x = Sample_type , y = as.numeric(Raw_paired_reads), color = Sample_type)) + 
+  geom_boxplot() +
+  geom_point() +
   labs(title = "16S Metagenomic sequencing reads", x = "Sample type", y = "raw paired reads") + 
   theme(axis.text.x = element_text( size = 18),
         axis.text.y = element_text(size = 18),
@@ -162,7 +202,7 @@ ggplot(sample_data(qiime_microbiome.ps), aes(x = Sample_type , y = Raw_paired_re
 #
 ## Diversity indices boxplots
 #
-ggplot(microbiome_16S_diversity_values, aes(x = Sample_type, y = Observed, color = Sample_type)) +
+ggplot(sample_data(qiime_microbiome.ps), aes(x = Sample_type, y = Observed, color = Sample_type)) +
   geom_boxplot() +
   geom_point() +
   labs(title = "Unique features by treatment group", x = "Sample type", y = "Observed features") + 
@@ -243,7 +283,7 @@ plot_bar(rel_phylum_qiime.ps, fill= "phylum") +
 #
 # To compare the microbiome composition between samples, we can calculate the "Bray-Curtis" distance
 # between samples using the "ordinate()" function.
-ordination_phylum_bray <- ordinate(CSS_normalized_phylum_qiime.ps, method = "NMDS", distance="bray", trymax= 1000, k=3)
+ordination_phylum_bray <- ordinate(CSS_normalized_phylum_qiime.ps, method = "NMDS")
 # We can then use "plot_ordination()" to plot the distance matrix
 # We specify that we want to compare "samples" and color the points by the "Sample_type" metadata variable
 plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "samples",color = "Sample_type")
@@ -270,14 +310,15 @@ plot_ordination(CSS_normalized_phylum_qiime.ps, ordination_phylum_bray, type = "
 
 # Test for differences in sequencing depth by Sample_type
 # The format is wilcox.test( Y numeric values ~ X grouping factor)
-# Here, we'll compare the number of raw reads between treatment groups
+# Here, we'll compare the number of raw reads between Sample_type.
+# Notice, we'll get an error that the "grouping factor must have exactly 2 levels"
 wilcox.test(sample_data(CSS_normalized_phylum_qiime.ps)$Raw_paired_reads ~ sample_data(CSS_normalized_phylum_qiime.ps)$Sample_type)
 
 # Wilcoxon tests are useful for comparisons between two groups, but you might have to test between 
 # more than two groups, such as sequencing lanes, so we can use generalized linear models, glm():
-glm(sample_data(CSS_normalized_phylum_qiime.ps)$Raw_paired_reads ~ sample_data(CSS_normalized_phylum_qiime.ps)$shotgun_seq_lane)
+glm(sample_data(CSS_normalized_phylum_qiime.ps)$Raw_paired_reads ~ sample_data(CSS_normalized_phylum_qiime.ps)$Sample_type)
 # We need to use "summary()" to view the results
-summary(glm(sample_data(CSS_normalized_phylum_qiime.ps)$Raw_paired_reads ~ sample_data(CSS_normalized_phylum_qiime.ps)$shotgun_seq_lane))
+summary(glm(sample_data(CSS_normalized_phylum_qiime.ps)$Raw_paired_reads ~ sample_data(CSS_normalized_phylum_qiime.ps)$Sample_type))
 
 #
 ## Ordination testing
@@ -287,7 +328,7 @@ summary(glm(sample_data(CSS_normalized_phylum_qiime.ps)$Raw_paired_reads ~ sampl
 # Here, we'll test by the "Group" variable
 group_variable = get_variable(CSS_normalized_phylum_qiime.ps,"Sample_type")
 # Use the anosim() function
-anosim(distance(CSS_normalized_phylum_qiime.ps, "bray"), Sample_type_variable)
+anosim(distance(CSS_normalized_phylum_qiime.ps, "bray"), group_variable)
 
 
 #

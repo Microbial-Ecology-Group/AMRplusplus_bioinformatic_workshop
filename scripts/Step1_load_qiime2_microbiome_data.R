@@ -7,12 +7,8 @@ source('scripts/load_R_packages.R')
 #
 
 
-sample_metadata <- read.table('./data/megarich_16S_sample_metadata.csv', header=T, sep=',', row.names = 1, quote = "")
-sample_metadata # Run the object name to get more information about the file we just loaded
-
-# Change name of the first column
-#colnames(sample_metadata)[1] <- "Sample_name"
-
+qiime_sample_metadata <- read.table('./data/megarich_16S_sample_metadata.csv', header=T, sep=',', row.names = 1, quote = "")
+qiime_sample_metadata # Run the object name to get more information about the file we just loaded
 
 
 #
@@ -44,4 +40,4 @@ taxa.df <- within(taxa.df, rm(feature))
 
 qiime_microbiome_phylo_tree <- read_tree("./data/Megarich_exported_16S_qiime2_results/tree.nwk")
 
-qiime_microbiome.ps <- merge_phyloseq(qiime_microbiome, phy_tree(qiime_microbiome_phylo_tree), tax_table(as.matrix(taxa.df)), sample_data(sample_metadata))
+qiime_microbiome.ps <- merge_phyloseq(qiime_microbiome, phy_tree(qiime_microbiome_phylo_tree), tax_table(as.matrix(taxa.df)), sample_data(qiime_sample_metadata))

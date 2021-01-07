@@ -173,3 +173,29 @@ ggplot(ordered_table_EB_zigFit_contrasts) +
   theme(legend.position = "none",
         plot.title = element_text(size = rel(1.5), hjust = 0.5),
         axis.title = element_text(size = rel(1.25))) 
+
+
+################################
+#                              #
+# "Publication-ready figures   #
+#                              #
+################################
+
+# You don't have to install the next package, but below is an example of how we can group
+# multiple plots in a page. The "ggpubr" package has a lot of great functions for making
+# publication-ready figures in combination with ggplot2.
+devtools::install_github("kassambara/ggpubr")
+
+# Below, we can use the "ggarrange()" to group our 4 plots saved from above.
+# Notice, we can use "common.legend" to specify that we only need one legend.
+# We also can add a label for each plot.
+combined_figures <- ggarrange(plot_filtered_raw_qiime_phylum  + rremove("x.text"),plot_tss_qiime_phylum  + rremove("x.text"),
+                              plot_rarefied_qiime_phylum,plot_css_qiime_phylum, common.legend = TRUE,
+                              legend = "right", labels = c("A)", "B)", "C)","D)"))
+combined_figures
+
+# Additionally, you can further annotate your figures using the "annotate_figure" function
+annotate_figure(combined_figures,
+                bottom = text_grob("Data source: 16S rRNA sequencing of beef feedlot cattle feces", color = "blue",
+                                   hjust = 1, x = 1, face = "italic", size = 8))
+
