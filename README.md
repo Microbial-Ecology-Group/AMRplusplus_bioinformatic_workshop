@@ -144,6 +144,7 @@ MEG resources
 * [LHS 610: Exploratory Data Analysis for Health](https://kdpsingh.lab.medicine.umich.edu/lhs-610)
   * We haven't personally tried this course, but they provide great videos and code examples for learning how to explore data using R.
 * R-specific resources
+  * [Amelia McNamara STATS 220 in R](https://www.amelia.mn/STAT220labs)
 
 * [Choose the right test](https://stats.idre.ucla.edu/other/mult-pkg/whatstat/)
 * Batch effects
