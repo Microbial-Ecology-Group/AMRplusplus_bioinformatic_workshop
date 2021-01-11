@@ -128,6 +128,7 @@ MEG resources
   * Also use [this site for neat jupyter tips and tricks](https://www.dataquest.io/blog/jupyter-notebook-tips-tricks-shortcuts/)'
 * [GGplot colors and themes](http://www.sthda.com/english/wiki/ggplot2-colors-how-to-change-colors-automatically-and-manually)
 * [More ggplot colors and themes](https://www.datanovia.com/en/blog/ggplot-colors-best-tricks-you-will-love/)
+* [Interactive heatmaps](https://jokergoo.github.io/2020/05/15/interactive-complexheatmap/)
 
 ### Command-line
 * [Explain shell](https://explainshell.com/)
