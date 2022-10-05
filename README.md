@@ -1,16 +1,6 @@
 # Microbial Ecology Group (MEG) - AMR++ bioinformatics workshop
 ## Course syllabus
-Start Date: January 5, 2020
-
-Email: meglab.metagenomics@gmail.com
-  * Paul Morley - pmorley@tamu.edu
-  * Noelle Noyes - nnoyes@umn.edu
-  * Enrique Doster - enriquedoster@gmail.com
-
-Slack group: https://meg-research.slack.com
-  * Join us here for general discussion and help with course content
-  * [Slack invite link](https://join.slack.com/t/meg-research/shared_invite/zt-kqth4uio-S_Td1JvQakUvpgU~Ti9owg)
-    * This link expires every 30 days, so let us know if it doesn't work for you.
+Start Date: October 10, 2022
 
 [Dropbox link](https://www.dropbox.com/sh/1xvpvxecesddfsc/AADYGmwC1p52eBeYjy_4qJ_-a?dl=0)
   * This dropbox folder contains all of the videos from our zoom course sessions and recordings from a previous MEG bioinformatics workshop.
@@ -30,7 +20,7 @@ We wholeheartedly encourage students to independently troubleshoot the majority 
 * getting help from other students by using our slackgroup channel #2021-AMR++workshop
 * searching bioinformatic forums such as (stackoverflow.com, biostars.org, seqanswers.com, etc.)
 
-
+## Workshop details
 ### Learning objectives:
 Upon completion of these lessons, students will:
 * have their computer set up with the R and RStudio software
@@ -45,6 +35,21 @@ Upon completion of these lessons, students will:
   * Analysis of similarities (ANOSIM)
   * Differential abundance testing using a zero-inflated Gaussian (ZIG) model
 
+
+### Instructors
+Group email: meglab.metagenomics@gmail.com
+
+**Dr. Paul Morley** -- pmorley@tamu.edu <br>
+
+**Dr. Noelle Noyes** -- nnoyes@umn.edu <br>
+
+**Peter Ferm** -- fermx014@umn.edu <br>
+
+**Dr. Lee Pinnell** -- ljpinnell@cvm.tamu.edu <br>
+
+**Dr. Enrique Doster** -- enriquedoster@tamu.edu <br>
+
+**Dr. Lisa Perez** -- perez@tamu.edu <br>
 
 ## Bioinformatic overview
 
