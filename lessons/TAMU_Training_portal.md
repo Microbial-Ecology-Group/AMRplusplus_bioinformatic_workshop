@@ -13,7 +13,7 @@ portal-lms.hprc.tamu.edu
 As seen in the image below the dropdown box is where you will place your username and password.
 
 
-![Portal login](./resources/portal-images/portal_login.png)
+![Portal login](../resources/portal-images/portal_login.png)
 
 
 Now that you are logged into your portal dashboard...Click on the `Files` dropdown tab and you will be redirected into your training `home` directory.
