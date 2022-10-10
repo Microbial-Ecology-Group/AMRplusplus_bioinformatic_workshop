@@ -44,4 +44,4 @@ When you are ready to logout of the portal, click the `Log Out` tab (top right o
 ![Portal logout](../resources/portal-images/TAMUportal_logout.png)
 
 
-
+Now onto the [Interactive Dessktop](./AMR++_on_TAMU_portal.md).
