@@ -1,6 +1,10 @@
-####load previous scripts ####
-source("Desktop/AMRplusplus_bioinformatic_workshop/R_analysis/scripts/6_beta_diversity.R")
+##### Load libraries and set working directory ####
+source("/Users/ljpinnell/Documents/VERO/Oct2022_BioinformaticsWorkshop/R_analysis/scripts/load_packages.R")
 
+####load previous scripts ####
+source("scripts/1_load_data.R")
+
+source("scripts/6_beta_diversity.R")
 
 #### STATISTICS ####
 
@@ -12,14 +16,12 @@ source("Desktop/AMRplusplus_bioinformatic_workshop/R_analysis/scripts/6_beta_div
 
 ### let's repeat the test on sequencing depth between sample types
 # 16S
-sequencing_depth_16S_boxplot
 pairwise.wilcox.test(sample_data(microbiome.ps)$Raw_paired_reads, sample_data(microbiome.ps)$Sample_type)
 # No signficant differences using the holm adjustment for multiple comparisons, which we can switch
 pairwise.wilcox.test(sample_data(microbiome.ps)$Raw_paired_reads, sample_data(microbiome.ps)$Sample_type, p.adjust.method = "BH")
 # p-values different, but no significant differences
 
 # AMR-TE
-sequencing_depth_amr_boxplot
 pairwise.wilcox.test(sample_data(amr.ps)$Raw_paired_reads, sample_data(amr.ps)$Sample_type, p.adjust.method = "BH")
 # No signficant differences
 
@@ -41,10 +43,6 @@ pairwise.wilcox.test(amr_alpha_meta$Observed, amr_alpha_meta$Sample_type, p.adju
 amr_diversity_boxplot
 pairwise.wilcox.test(amr_alpha_meta$Shannon, amr_alpha_meta$Sample_type, p.adjust.method = "BH")
 # all significantly different from each other, except swine and WWTP not different
-
-# We can also use this to test for differences in individual taxa
-# Remember we looked at Bacteroidota and Tetracyclines
-bacter
 
 #### PERMUTATIONAL MANOVA (adonis) ####
 # We use PERMANOVA for beta-diversity
