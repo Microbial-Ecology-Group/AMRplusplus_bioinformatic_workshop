@@ -3,7 +3,7 @@
 ### Table of contents
 * [Login](#log-into-training-portal)
 * [Command-line basics](#command-line-basics)
-* [Using the terminal to run AMR++](#using-the-terminal-to-run-amr++)
+* [Using the terminal](#using-the-terminal)
 * [Exploring results](#exploring-results)
 
 
