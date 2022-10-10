@@ -42,7 +42,12 @@ Now on your new Interacivte Desktop tab, click on the terminal emulator app and 
 
 
 ### Download files using github
-To download AMR++, run the following command:
+First, let's see what is in your starting directory.
+```bash
+$ ls
+```
+
+To download AMR++, navigate into your "Desktop" directory, then run the following command:
 ```bash
 $ git clone https://github.com/EnriqueDoster/AMRplusplus.git
 ```
@@ -172,6 +177,6 @@ To run qiime2, we need to change the "--pipeline", "--reads", and "--output" fla
 If we don't change the "--output" flag, results will be placed in the default directory and could overwrite your results. 
 
 ```bash
-$ nextflow run main_AMR++.nf -profile singularity_workshop --reads "data/Test_16S_data/*_R{1,2}_001.fastq.gz" --output test_16S_results --pipeline qiime2
+$ nextflow run main_AMR++.nf -profile singularity_workshop --reads "data/Test_16S_data/*_R{1,2}_5K.fastq.gz" --output test_16S_results --pipeline qiime2
 ```
 
