@@ -5,6 +5,8 @@
 * [Command-line basics](#command-line-basics)
 * [Using terminal to run a pipeline](#using-terminal-to-run-a-pipeline)
 * [Exploring results](#exploring-results)
+* [Run with sbatch script](#running-the-pipeline-with-a-script)
+* [Qiime2 example](#another-example---running-qiime2)
 
 
 ## Log into training portal
@@ -28,100 +30,15 @@ You will be queued for a brief moment and then once your session is created we w
 
 ![Portal node](../resources/portal-images/TAMUportal_nodeReady.png)
 
-------------------------------------------
-------------------------------------------
-
-
-## Command-line basics
-
-Now on your new Interacivte Desktop tab, click on the terminal emulator app and then we will begin the command-line portion of the workshop!
-
-
-![Portal terminal](../resources/portal-images/TAMUportal_terminalOnDesktop.png)
-
-A helpful tip on the Interacive Desktop is using the clipboard feature to copy and paste text (if you are not using Google Chrome).
-
-![Portal clipboard](../resources/portal-images/TAMUportal_clipboard.png)
-
-We'll be using a command called `git` to download AMR++ and all of the required software. We will first learn some basics about the command-line, before we run the AMR++ pipeline, including: 
-
-* Basic navigation
-* Where am I located! 
-* Copying a file
-* Running a basic `bash` script
-
-It is important to note the `$` character in the code block examples below represents the end of the command prompt, therefore you will not need to type in or copy it when you run your commands.
-
-<br />
-
-The basic structure of the command line:
-
-```bash
-$ command <option(s)> <argument(s)>
-```
-
-The first command we will run is `pwd`, this stands for "print working directory" and by default it will print out the `absolute path` of where you are currently standing on the file system. The `absolute path` begins at the root directory `/` and follows the path until the path to the desired directory or file is completed.
-```bash
-$ pwd
-```
-
-To change directories we will use the `cd` command and we will give it the `relative path` to your `Desktop` directory. Here the relative path starts from your working directory (i.e. as if now your `home` directory). This is where you are currently standing on the file system. 
-
-When it comes to the `relative path`  it is important to note there are a couple of special notations to represent relative positions in the file system. These special notations are `.` (dot) and `..` (dot dot). The `.` notation refers to the working directory and the `..` notation refers to the working directory's parent directory.
-```bash
-$ cd Desktop/
-```
-
-Now in your `Desktop` directory we will us the `ls` command. By default it will list the contents of the directory where you are currently standing.
-```bash
-$ ls
-```
-Next, lets create a directory where we can practice some basic file manipulation commands by creating an empty file, copying a file from another location, and running an executable file (i.e. a script). 
-
-```bash
-$ mkdir practice
-```
-
-Now lets navigate into the `practice` directory we just created and list its contents.
-
-```bash
-$ cd practice
-$ ls
-```
-As you can see it is empty and there is no output to the terminal screen. Let create an empty a file in our `practice` directory. Lets, then add a line of text to the file with the `echo` command and redirection `>`. To print the standard output of what inside of the file to terminal lets use the `cat` command.
-
-```bash
-$ touch hello_world.sh
-$ echo "The command-line is actually fun...maybe?" > hello_world.sh
-$ cat hello_world.sh
-```
-
-Lets now copy a file from another location with the same name. This is important to see, because this will overwrite our file we were just working on. When using commands such as `cp`(copy) `mv`(move) and `rm`(remove) be aware of the potential to unintenially overwrite or remove files. The command-line assumes we are smart :) 
-```bash
-$ cp /home/training15/hello_world.sh .
-```
-
-Now lets run this `bash` script with the `bash` command. Lets see the output!
-```bash
-$ bash hello_world.sh
-```
-
-Lets open our script to brirefly break it down. We will use the `less` command to read the file. To close out of the `less` command we will type the letter `q`. 
-
-```
-$ less hello_world.sh
-```
-
-Finally, lets return to our `Desktop` directory using the `relative path`. 
-
-```bash
-$ cd ..
-```
 
 ------------------------------------------
 ------------------------------------------
 
 ## Using terminal to run a pipeline
+Now on your new Interacivte Desktop tab, click on the terminal emulator app and then we will begin the command-line portion of the workshop!
+
+
+![Portal terminal](../resources/portal-images/TAMUportal_terminalOnDesktop.png)
 
 
 To download AMR++, run the following command:
@@ -251,8 +168,11 @@ $ squeue -u $USER
 First, lets find the 16S reads. For this example, the samples come with your AMRplusplus repository and can be found in the directory "AMRplusplus/data/Test_16S_data/".
 
 
-To run qiime2, we need to change the "--pipeline", "--reads", and "--output" flags
+To run qiime2, we need to change the "--pipeline", "--reads", and "--output" flags.
+
+If we don't change the "--output" flag, results will be placed in the default directory and could overwrite your results. 
+
 ```bash
-$ nextflow run main_AMR++.nf -profile singularity_workshop --reads "data/Test_16S_data/*_R{1,2}_001.fastq.gz" --output test_16S_results
+$ nextflow run main_AMR++.nf -profile singularity_workshop --reads "data/Test_16S_data/*_R{1,2}_001.fastq.gz" --output test_16S_results --pipeline qiime2
 ```
 
