@@ -1,0 +1,17 @@
+SeqID,SampleID,Sample_Name,ID,Sequencing Library,Sample_type,Sequencing_type,Raw_paired_reads,ASVs
+AFe1,AFe1,PoultryMetagenomeD,PoultryD,R8,Poultry,Amplicon,33204,28810
+AFe20,AFe20,PoultryMetagenomeB,PoultryB,R16,Poultry,Amplicon,34352,28212
+AFe25,AFe25,PoultryMetagenomeA,PoultryA,R14,Poultry,Amplicon,40183,34284
+AFe9,AFe9,PoultryMetagenomeC,PoultryC,R20,Poultry,Amplicon,36728,29501
+BFe11,BFe11,BeefMetagenomeA,BeefA,R7,Beef,Amplicon,34689,28036
+BFe13,BFe13,BeefMetagenomeB,BeefB,R1,Beef,Amplicon,34285,27232
+BFe2,BFe2,BeefMetagenomeC,BeefC,R5,Beef,Amplicon,34440,27642
+BFe39,BFe39,BeefMetagenomeD,BeefD,R13,Beef,Amplicon,25624,20048
+HBHw1,HBHw1,WWTPMetagenomeA,WWTPA,R11,WWTP,Amplicon,30770,25201
+HBHw2,HBHw2,WWTPMetagenomeB,WWTPB,R3,WWTP,Amplicon,34176,28089
+HBHw3,HBHw3,WWTPMetagenomeC,WWTPC,R9,WWTP,Amplicon,28177,23029
+HBHw4,HBHw4,WWTPMetagenomeD,WWTPD,R17,WWTP,Amplicon,30079,24817
+PFe13,PFe13,SwineMetagenomeC,SwineC,R4,Swine,Amplicon,28976,23746
+PFe16,PFe16,SwineMetagenomeA,SwineA,R15,Swine,Amplicon,33462,28023
+PFe22,PFe22,SwineMetagenomeD,SwineD,R18,Swine,Amplicon,31179,25937
+PFe37,PFe37,SwineMetagenomeB,SwineB,R12,Swine,Amplicon,34809,29300
