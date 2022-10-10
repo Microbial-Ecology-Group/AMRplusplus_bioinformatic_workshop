@@ -3,7 +3,7 @@
 ### Table of contents
 * [Login](#log-into-training-portal)
 * [Command-line basics](#command-line-basics)
-* [Using the terminal](#using-the-terminal)
+* [Using terminal to run a pipeline](#using-terminal-to-run-a-pipeline)
 * [Exploring results](#exploring-results)
 
 
@@ -121,7 +121,7 @@ $ cd ..
 ------------------------------------------
 ------------------------------------------
 
-## Using the terminal to run AMR++
+## Using terminal to run a pipeline
 
 
 To download AMR++, run the following command:
