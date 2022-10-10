@@ -183,7 +183,7 @@ The standard output to the terminal screen is interactive. Once the run has fini
 ## Running your own data with AMR++
 
 
-Lets look at the reads that we'll be using. 
+Lets look at the TE reads that we'll be using. 
 ```bash
 $ ls /home/training/AMR_workshop_reads/small_subsample/
 ```
@@ -193,7 +193,28 @@ To analyze these reads, we can use a similar command for AMR++, but we have to c
 $ nextflow run main_AMR++.nf -profile singularity_workshop --reads "/home/training/AMR_workshop_reads/small_subsample/*_{1,2}.fastq.gz"
 ```
 
+First, however, we might want to evaluate quality of your sequencing reads with the "--pipeline eval_qc" option.
+```bash
+$ nextflow run main_AMR++.nf -profile singularity_workshop --reads "/home/training/AMR_workshop_reads/small_subsample/*_{1,2}.fastq.gz" --pipeline eval_qc
+```
 
+Let's take a look at those files to evaluate our sequence sample quality:
+![Portal download](../resources/portal-images/portal_view_QC.png)
+
+
+
+
+Now, we can open and modify the "params.config" file to change the trimming parameters.
+
+![Portal download](../resources/portal-images/portal_edit_params.png)
+
+
+
+
+Finally, we can run the standard AMR pipeline
+```bash
+$ nextflow run main_AMR++.nf -profile singularity_workshop --reads "/home/training/AMR_workshop_reads/small_subsample/*_{1,2}.fastq.gz" --pipeline standard_AMR
+```
 
 ## Exploring results
 
@@ -203,9 +224,15 @@ Next we will move back to our portal dashboard and download our AMR++ output fil
 
 ![Portal download](../resources/portal-images/TAMUportal_dwnlFile.png)
 
+* Using excel or another program, open the file "test_results/RunQC/Stats/trimmomatic.stats"
+* Look at the file "test_results/NonHostReads/HostRemovalStats/host.removal.stats"
+* Check out the rarefaction plots in this directory "test_results/RarefactionFigures/graphs/"
 
 
 
+## Another example - running Qiime2
 
-
-
+To run qiime2, we need to change the "--pipeline", "--reads", and "--output" flags
+```bash
+$ nextflow run main_AMR++.nf -profile singularity_workshop --reads "/home/training/AMR_workshop_reads/Test_16S_data/*_R{1,2}_001.fastq.gz" --output test_16S_results
+```
