@@ -201,7 +201,7 @@ $ nextflow run main_AMR++.nf -profile singularity_workshop --reads "/home/traini
 Next we will move back to our portal dashboard and download our AMR++ output files locally to our computers to further explore them!
 
 
-![Portal download](../resources/portal-images/)
+![Portal download](../resources/portal-images/TAMUportal_dwnlFile.png)
 
 
 
