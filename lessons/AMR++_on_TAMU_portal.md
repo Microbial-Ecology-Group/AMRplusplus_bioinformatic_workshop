@@ -41,6 +41,7 @@ Now on your new Interacivte Desktop tab, click on the terminal emulator app and 
 ![Portal terminal](../resources/portal-images/TAMUportal_terminalOnDesktop.png)
 
 
+### Download files using github
 To download AMR++, run the following command:
 ```bash
 $ git clone https://github.com/EnriqueDoster/AMRplusplus.git
@@ -56,10 +57,8 @@ We can quickly get a glimpse at what we just downloaded. You can also click on t
 $ ls AMRplusplus_bioinformatic_workshop
 $ ls AMRplusplus
 ```
-![Portal terminal](../resources/portal-images/portal_github_dl.png)
 
-
-
+### Preparing to run AMR ++
 
 To start your AMR++ run, go back to the terminal. Now, we'll navigate into the AMR++ directory and use `ls` to view the contents.
 ```bash
@@ -110,9 +109,9 @@ To analyze these reads, we can use a similar command for AMR++, but we have to c
 $ nextflow run main_AMR++.nf -profile singularity_workshop --reads "/home/training/AMR_workshop_reads/small_subsample/*_{1,2}.fastq.gz"
 ```
 
-First, however, we might want to evaluate quality of your sequencing reads with the "--pipeline eval_qc" option.
+First, however, we might want to evaluate quality of your sequencing reads with the ```--pipeline eval_qc``` option. Let's also change the ```--output`` directory.
 ```bash
-$ nextflow run main_AMR++.nf -profile singularity_workshop --reads "/home/training/AMR_workshop_reads/small_subsample/*_{1,2}.fastq.gz" --pipeline eval_qc
+$ nextflow run main_AMR++.nf -profile singularity_workshop --reads "/home/training/AMR_workshop_reads/small_subsample/*_{1,2}.fastq.gz" --pipeline eval_qc --output QC_output
 ```
 
 Let's take a look at those files to evaluate our sequence sample quality:
@@ -128,9 +127,9 @@ Now, we can open and modify the "params.config" file to change the trimming para
 
 
 
-Finally, we can run the standard AMR pipeline
+Finally, we can run the standard AMR pipeline, and change the ``--output`` flag.
 ```bash
-$ nextflow run main_AMR++.nf -profile singularity_workshop --reads "/home/training/AMR_workshop_reads/small_subsample/*_{1,2}.fastq.gz" --pipeline standard_AMR
+$ nextflow run main_AMR++.nf -profile singularity_workshop --reads "/home/training/AMR_workshop_reads/small_subsample/*_{1,2}.fastq.gz" --pipeline standard_AMR --output TE_AMR++_output
 ```
 
 ## Exploring results
