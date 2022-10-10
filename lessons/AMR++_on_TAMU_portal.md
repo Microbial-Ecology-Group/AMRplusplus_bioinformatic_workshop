@@ -228,11 +228,31 @@ Next we will move back to our portal dashboard and download our AMR++ output fil
 * Look at the file "test_results/NonHostReads/HostRemovalStats/host.removal.stats"
 * Check out the rarefaction plots in this directory "test_results/RarefactionFigures/graphs/"
 
+## Running the pipeline with a script
 
+First, lets look at the file, "run_AMR++.sh" file which is a SBATCH script. 
+Notice the first lines are requesting resources from the computing cluster and then you can find our typical commands that we have been using. 
+
+Now, to submit this script we have to use "sbatch" as shown below:
+
+```bash
+$ sbatch run_AMR++.sh 
+```
+
+Now, we can't see what is happening so we need to run the "squeue" function to see what is currently being run. 
+
+```bash
+$ squeue -u $USER 
+```
 
 ## Another example - running Qiime2
 
+
+First, lets find the 16S reads. For this example, the samples come with your AMRplusplus repository and can be found in the directory "AMRplusplus/data/Test_16S_data/".
+
+
 To run qiime2, we need to change the "--pipeline", "--reads", and "--output" flags
 ```bash
-$ nextflow run main_AMR++.nf -profile singularity_workshop --reads "/home/training/AMR_workshop_reads/Test_16S_data/*_R{1,2}_001.fastq.gz" --output test_16S_results
+$ nextflow run main_AMR++.nf -profile singularity_workshop --reads "data/Test_16S_data/*_R{1,2}_001.fastq.gz" --output test_16S_results
 ```
+
