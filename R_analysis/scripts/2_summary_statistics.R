@@ -106,3 +106,36 @@ amr_class.ps <- tax_glom(amr.ps, taxrank = "class")
 
 microbiome_phylum.ps # 37 phyla across all samples
 amr_class.ps # 48 classes across all samples
+
+microbiome_genus.ps <- tax_glom(microbiome.ps, taxrank = "Genus", NArm = T)
+microbiome_genus.ps
+
+#### Example of determining the percent of reads classified at the Genus level ####
+
+# First we have to extract the tax_table and convert it to a "data.frame"
+taxa.df <- as.data.frame(tax_table(microbiome.ps))
+taxa.df
+# Now let's search for which taxa start with "unclassified"
+unclassified_genus.df <- taxa.df %>% filter(grepl('unclassified', Genus))
+# Pull out the unique 
+unclassified_genus <- row.names(unclassified_genus.df)
+
+# Example of a function that we can use (and re-use) to remove unwanted taxa
+pop_taxa = function(physeq, badTaxa){
+  allTaxa = taxa_names(physeq)
+  allTaxa <- allTaxa[!(allTaxa %in% badTaxa)]
+  return(prune_taxa(allTaxa, physeq))
+}
+
+# We can run the "pop_taxa" function here using the genus phyloseq object and the list of features we want to remove
+trimmed_microbiome_genus.ps = pop_taxa(microbiome_genus.ps, unclassified_genus)
+
+# Sum the counts for each sample
+sample_sums(trimmed_microbiome_genus.ps)
+
+# To sum across all samples, we can place that command inside the "sum()" function
+sum(sample_sums(trimmed_microbiome_genus.ps))
+
+# Now, we calculate the proportion of reads mapped to the species level, out of all microbiome mapped reads
+sum(sample_sums(trimmed_microbiome_genus.ps)) / sum(sample_sums(microbiome.ps)) * 100
+
