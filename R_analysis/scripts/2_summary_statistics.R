@@ -95,6 +95,7 @@ sequencing_depth_amr_boxplot
 # test it
 pairwise.wilcox.test(sample_data(microbiome.ps)$Raw_paired_reads, sample_data(microbiome.ps)$Sample_type) #NS
 
+# Example of a possible mistake, can you see what's wrong?
 pairwise.wilcox.test(sample_data(amr.ps)$Raw_paired_reads, sample_data(microbiome.ps)$Sample_type) #NS
 
 
